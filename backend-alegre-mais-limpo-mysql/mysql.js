@@ -20,6 +20,7 @@ exports.execute = (query, params=[]) => {
             }
         });
     })
+    
 }
 
 exports.pool = pool;

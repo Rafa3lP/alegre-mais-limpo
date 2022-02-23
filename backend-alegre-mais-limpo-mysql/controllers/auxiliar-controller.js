@@ -88,10 +88,18 @@ exports.create = async (req, res, next) => {
                         console.log(response);
                         return res.status(201).send(response);
 
+                    }, error => {
+                        res.status(500).send({ error: "Falha ao inserir auxiliar" });
                     })
 
+                }, error => {
+                    res.status(500).send({ error: "Falha ao inserir usuario" });    
                 })
+            }, error => {
+                res.status(500).send({ error: "Falha ao inserir endereco" });    
             })
+        }, error => {
+            res.status(500).send({ error: "Falha ao inserir cidade" });
         })
 
     } catch (error) {

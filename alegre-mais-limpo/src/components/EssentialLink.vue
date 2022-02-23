@@ -1,16 +1,18 @@
 <template>
-  <q-item clickable tag="a" target="_blank" :href="link">
-    <q-item-section v-if="icon" avatar>
-      <q-icon :name="icon" />
-    </q-item-section>
+  <router-link style="text-decoration: none; color: inherit;" :to="{name: to}">
+    <q-item clickable>
+      <q-item-section v-if="icon" avatar>
+        <q-icon :name="icon" />
+      </q-item-section>
 
-    <q-item-section>
-      <q-item-label>{{ title }}</q-item-label>
-      <q-item-label caption>
-        {{ caption }}
-      </q-item-label>
-    </q-item-section>
-  </q-item>
+      <q-item-section>
+        <q-item-label>{{ title }}</q-item-label>
+        <q-item-label caption>
+          {{ caption }}
+        </q-item-label>
+      </q-item-section>
+    </q-item>
+  </router-link>
 </template>
 
 <script>
@@ -29,9 +31,9 @@ export default defineComponent({
       default: "",
     },
 
-    link: {
+    to: {
       type: String,
-      default: "#",
+      default: "login",
     },
 
     icon: {

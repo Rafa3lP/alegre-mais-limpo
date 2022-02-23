@@ -20,7 +20,7 @@
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
       <q-list>
-        <q-item-label header> Essential Links </q-item-label>
+        <q-item-label header> Menu </q-item-label>
 
         <EssentialLink
           v-for="link in essentialLinks"
@@ -31,14 +31,14 @@
     </q-drawer>
 
     <q-page-container>
-      <router-view />
+      <router-view/>
     </q-page-container>
   </q-layout>
 </template>
 
 <script>
 import EssentialLink from "components/EssentialLink.vue";
-
+/*
 const linksList = [
   {
     title: "Docs",
@@ -82,7 +82,7 @@ const linksList = [
     icon: "favorite",
     link: "https://awesome.quasar.dev",
   },
-];
+];*/
 
 import { defineComponent } from "vue";
 import { mapGetters } from "vuex";
@@ -97,11 +97,36 @@ export default defineComponent({
   data() {
     return {
       leftDrawerOpen: false,
-      essentialLinks: linksList
+      essentialLinks: []
     }
   },
 
   methods: {
+    setLinks() {
+      switch(this.getNivelDeAcesso) {
+        //adm
+        case 1:
+          this.essentialLinks = [ 
+            {
+              title: "Administradores",
+              icon: "person_outline",
+              to: "login",
+            },
+            {
+              title: "Auxiliares",
+              icon: "person_outline",
+              to: "login",
+            }
+          ]
+          break;
+        //aux
+        case 2:
+          break;
+        //mot
+        case 3:
+          break;
+      }
+    },
     toggleLeftDrawer() {
       this.leftDrawerOpen = !this.leftDrawerOpen;
     },
@@ -111,7 +136,10 @@ export default defineComponent({
     }
   },
   computed: {
-    ...mapGetters('auth', ['isAuthenticated'])
+    ...mapGetters('auth', ['isAuthenticated', 'getNivelDeAcesso'])
+  },
+  created() {
+    this.setLinks();
   }
 });
 </script>
