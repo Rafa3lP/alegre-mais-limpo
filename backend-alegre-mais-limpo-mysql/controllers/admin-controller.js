@@ -88,3 +88,20 @@ exports.create = async (req, res, next) => {
         return res.status(500).send({ error: error });
     }
 };
+
+exports.getAdministradores = async (req, res, next) => {
+    try {
+        const query = `
+        SELECT u.idUsuario, u.nome 
+        FROM usuario AS u
+        WHERE nivelDeAcesso = 1;`;
+
+        const result = await mysql.execute(query, []);
+
+        const response = {administradores: Object.keys(result).map((key) => result[key])};
+        return res.status(200).send(response);
+    } catch (error) {
+        console.log(error.status);
+        return res.status(500).send({ error: error });
+    }
+};

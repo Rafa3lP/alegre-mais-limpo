@@ -11,8 +11,7 @@
           @click="toggleLeftDrawer"
         />
 
-        <q-toolbar-title> Quasar App </q-toolbar-title>
-
+        <q-toolbar-title> Alegre Mais Limpo </q-toolbar-title>
         <q-btn stretch flat to="/login" v-if="!isAuthenticated">Login</q-btn>
         <q-btn stretch flat @click="logout" v-else icon="logout" title="Sair"></q-btn>
       </q-toolbar>
@@ -109,13 +108,13 @@ export default defineComponent({
           this.essentialLinks = [ 
             {
               title: "Administradores",
-              icon: "person_outline",
-              to: "login",
+              icon: "admin_panel_settings",
+              to: "admin.administradores",
             },
             {
               title: "Auxiliares",
               icon: "person_outline",
-              to: "login",
+              to: "admin.auxiliares",
             }
           ]
           break;
@@ -132,7 +131,7 @@ export default defineComponent({
     },
     logout() {
       this.$store.dispatch('auth/signOut');
-      this.$router.push('/');
+      this.$router.push({name: 'login'});
     }
   },
   computed: {

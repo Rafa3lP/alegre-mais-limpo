@@ -1,6 +1,7 @@
 import { boot } from "quasar/wrappers";
 import { Notify, Loading } from 'quasar';
 import axios from "axios";
+import Router from '../router'; 
 
 // Be careful when using SSR for cross-request state pollution
 // due to creating a Singleton instance here;
@@ -32,6 +33,15 @@ api.interceptors.response.use(function (response) {
   // Any status code that lie within the range of 2xx cause this function to trigger
   // Do something with response data
   Loading.hide();
+  if(response.status) {
+    switch(response.status) {
+      case 401:
+        Router.push({name: 'login'});
+        break;
+      default:
+        break;
+    }
+  }
   return response;
 }, function (error) {
   // Any status codes that falls outside the range of 2xx cause this function to trigger

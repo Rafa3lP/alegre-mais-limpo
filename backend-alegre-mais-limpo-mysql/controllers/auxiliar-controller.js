@@ -106,3 +106,20 @@ exports.create = async (req, res, next) => {
         return res.status(500).send({ error: error });
     }
 };
+
+exports.getAuxiliares = async (req, res, next) => {
+    try {
+        const query = `
+        SELECT a.idAuxiliar, u.nome, a.servicoComunitario 
+        FROM usuario AS u 
+        INNER JOIN auxiliar AS a ON u.idUsuario = a.idAuxiliar;`;
+
+        const result = await mysql.execute(query, []);
+
+        const response = {auxiliares: Object.keys(result).map((key) => result[key])};
+        return res.status(200).send(response);
+    } catch (error) {
+        console.log(error.status);
+        return res.status(500).send({ error: error });
+    }
+};
