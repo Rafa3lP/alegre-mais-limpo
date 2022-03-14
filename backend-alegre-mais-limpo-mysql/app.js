@@ -38,10 +38,6 @@ app.use('/zona', zonaRoute);
 app.use('/admin', adminRoute);
 app.use('/auxiliar', auxiliarRoute);
 app.use('/motorista', motoristaRoute);
-/*app.use('/categories', categoryRoute);
-app.use('/orders', orderRoute);
-app.use('/users', userRoute);
-app.use('/images', imageRoute);*/
 
 app.use((req, res, next) => {
     const erro = new Error('Não encontrado');

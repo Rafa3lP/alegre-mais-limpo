@@ -9,23 +9,18 @@ const bcrypt = require('bcrypt');
     "cpf": "14777617726",
     "usuario": "rafael.prenholato",
     "senha": "1234",
-    "endereco": {
-        "bairro": "bairro top",
-        "logradouro": "rua top",
-        "cep": "29360000",
-        "numero": "21",
-        "complemento": "Complemento teste",
-        "cidade": {
-            "nome": "Castelo",
-            "uf": "ES"
-        }
-    }
+    "bairro": "bairro top",
+    "logradouro": "rua top",
+    "cep": "29360000",
+    "numero": "21",
+    "complemento": "Complemento teste",
+    "cidade": "Castelo",
+    "uf": "ES"
 }
 */ 
 
 exports.create = async (req, res, next) => {
     try {
-        console.log(req.body);
         var query = "SELECT * FROM usuario WHERE usuario = ?";
         var result = await mysql.execute(query, [ req.body.usuario ]);
 
@@ -35,13 +30,16 @@ exports.create = async (req, res, next) => {
 
         const hash = await bcrypt.hashSync(req.body.senha, 10);
 
-        const cidadeData = ({ nome, uf } = req.body.endereco.cidade);
+        const cidadeData = Object.assign({}, { 
+            nome: req.body.cidade, 
+            uf: req.bory.uf
+        });
         const enderecoData = Object.assign({},{ 
-            bairro: req.body.endereco.bairro, 
-            logradouro: req.body.endereco.logradouro, 
-            cep: req.body.endereco.cep, 
-            numero: req.body.endereco.numero,
-            complemento: req.body.endereco.complemento 
+            bairro: req.body.bairro, 
+            logradouro: req.body.logradouro, 
+            cep: req.body.cep, 
+            numero: req.body.numero,
+            complemento: req.body.complemento 
         });
         const userData = Object.assign({}, { 
             nome: req.body.nome, 
@@ -53,8 +51,6 @@ exports.create = async (req, res, next) => {
         });
 
         query = 'INSERT INTO cidade (nome, uf) VALUES (?, ?)';
-
-        //console.log(Object.values(cidadeData));
 
         mysql.execute(query, Object.values(cidadeData))
         .then(result => {
@@ -92,14 +88,59 @@ exports.create = async (req, res, next) => {
 exports.getAdministradores = async (req, res, next) => {
     try {
         const query = `
-        SELECT u.idUsuario, u.nome 
-        FROM usuario AS u
+        SELECT u.idUsuario, u.nome, u.dataNascimento, u.cpf, u.usuario, 
+        e.bairro, e.logradouro, e.cep, e.numero, e.complemento, c.nome cidade, c.uf
+        FROM usuario AS u 
+        INNER JOIN endereco AS e ON u.idEndereco = e.idEndereco
+        INNER JOIN cidade AS c ON c.idCidade = e.idCidade
         WHERE nivelDeAcesso = 1;`;
 
         const result = await mysql.execute(query, []);
 
         const response = {administradores: Object.keys(result).map((key) => result[key])};
         return res.status(200).send(response);
+    } catch (error) {
+        console.log(error.status);
+        return res.status(500).send({ error: error });
+    }
+};
+
+exports.delete = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+
+        var query = `SELECT u.idUsuario, u.idEndereco, e.idCidade 
+        FROM usuario AS u
+        INNER JOIN endereco AS e ON u.idEndereco = e.idEndereco 
+        WHERE u.idUsuario = ?
+        `;
+
+        var result = await mysql.execute(query, [ id ]);
+        
+        if(result.length == 0) {
+            return res.status(409).send({message: "Não existe nenhum usuario com este id"});
+        }
+
+        query = `
+        DELETE FROM usuario
+        WHERE idUsuario = ?`;
+
+        await mysql.execute(query, [result[0].idUsuario]);
+
+        query = `
+        DELETE FROM endereco
+        WHERE idEndereco = ?`;
+
+        await mysql.execute(query, [result[0].idEndereco]);
+
+        query = `
+        DELETE FROM cidade
+        WHERE idCidade = ?`;
+
+        await mysql.execute(query, [result[0].idCidade]);
+
+        return res.status(200).send({ message: 'Ok' });
+
     } catch (error) {
         console.log(error.status);
         return res.status(500).send({ error: error });

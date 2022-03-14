@@ -30,6 +30,11 @@ const routes = [
         name: 'admin.auxiliares',
         path: "auxiliares",
         component: () => import("../pages/admin/auxiliares/ListarAuxiliares.vue"),
+      },
+      {
+        name: 'admin.motoristas',
+        path: "motoristas",
+        component: () => import("../pages/admin/motoristas/ListarMotoristas.vue"),
       }
     ]
   },

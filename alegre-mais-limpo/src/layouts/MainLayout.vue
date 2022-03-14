@@ -115,6 +115,11 @@ export default defineComponent({
               title: "Auxiliares",
               icon: "person_outline",
               to: "admin.auxiliares",
+            },
+            {
+              title: "Motoristas",
+              icon: "person_outline",
+              to: "admin.motoristas",
             }
           ]
           break;

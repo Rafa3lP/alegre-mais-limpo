@@ -98,3 +98,20 @@ exports.create = async (req, res, next) => {
         return res.status(500).send({ error: error });
     }
 };
+
+exports.getMotoristas = async (req, res, next) => {
+    try {
+        const query = `
+        SELECT m.idMotorista, u.nome, m.numCarteira 
+        FROM usuario AS u 
+        INNER JOIN motorista AS m ON u.idUsuario = m.idMotorista;`;
+
+        const result = await mysql.execute(query, []);
+
+        const response = {motoristas: Object.keys(result).map((key) => result[key])};
+        return res.status(200).send(response);
+    } catch (error) {
+        console.log(error.status);
+        return res.status(500).send({ error: error });
+    }
+};
