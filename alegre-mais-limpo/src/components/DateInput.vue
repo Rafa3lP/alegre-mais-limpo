@@ -1,9 +1,18 @@
 <template>
-    <q-input v-bind="$attrs" v-model="computedDate" mask="##/##/####">
+<div>
+    <q-input
+        :filled="filled"
+        :label="label"
+        :dense="dense"
+        :outlined="outlined"
+        :disable="disable"
+        :model-value="val"
+        @update:modelValue="$emit('update:modelValue', $event);" 
+    >
         <template v-slot:append>
             <q-icon name="event" class="cursor-pointer">
             <q-popup-proxy ref="qDateProxy" cover transition-show="scale" transition-hide="scale">
-                <q-date v-model="computedDate" mask="DD/MM/YYYY">
+                <q-date :model-value="val" @update:modelValue="setDate" mask="DD/MM/YYYY">
                 <div class="row items-center justify-end">
                     <q-btn v-close-popup label="Close" color="primary" flat />
                 </div>
@@ -12,34 +21,59 @@
             </q-icon>
         </template>
     </q-input>
+</div>
 </template>
 
 <script>
-import { date } from 'quasar'
-
 export default {
+    name: 'DateInput',
     props: {
-        value: {
-            required: true,
-            type: Date
-        }, 
-    },
-    data() {
-        return {
-            val: this.$props.value.getTime()
+        modelValue: {
+            type: String,
+            default: ''
+        },
+        filled: {
+            type: Boolean,
+            default: false
+        },
+        label: {
+            type: String,
+            default: ''
+        },
+        dense: {
+            type: Boolean,
+            default: false
+        },
+        outlined: {
+            type: Boolean,
+            default: false
+        },
+        disable: {
+            type: Boolean,
+            default: false
         }
     },
     computed: {
-        computedDate: {
-            get () {
-                return date.formatDate(this.val, 'DD/MM/YYYY')
+        val: {
+            get: function() {
+                return new Date(this.modelValue).toLocaleDateString()
             },
-            set (value) {
-                const correct_date = date.extractDate(value, 'DD/MM/YYYY');  
-                this.val = correct_date.getTime();
+            set: function(newValue) {
+                let aux = newValue.split('/');
+    
+                this.$emit('update:modelValue', new Date(
+                    parseInt(aux[2]),
+                    parseInt(aux[1])-1,
+                    parseInt(aux[0])
+                ).toISOString());
             }
         }
     },
+    methods: {
+        setDate(date) {
+            this.val = date;
+        }
+    }
 }
 </script>
 

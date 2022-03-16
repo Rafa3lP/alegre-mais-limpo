@@ -2,7 +2,7 @@ export default class Usuario {
     constructor(
         id = '',
         nome ='', 
-        dataNascimento = '', 
+        dataNascimento = new Date().toISOString(), 
         cpf = '', 
         usuario = '', 
         senha = '', 

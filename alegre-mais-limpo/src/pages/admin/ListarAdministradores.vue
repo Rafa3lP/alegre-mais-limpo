@@ -1,6 +1,8 @@
 <template>
   <div class="q-pa-md">
-    <div class="text-h4 q-mb-md">Listando Administradores</div>
+    <div class="text-h4 q-pa-md row justify-center text-primary">
+      Administradores
+    </div>
     <q-table
       :grid="$q.screen.xs"
       dense
@@ -42,7 +44,7 @@
             round 
             flat 
             color="negative" 
-            @click="deleteRow(props)" i
+            @click="deleteRow(props)"
             icon="delete"
             >
             </q-btn>
@@ -57,14 +59,16 @@
           </template>
         </q-input>
         <q-space />
-        <q-btn 
+        <q-btn
+        class="q-ma-md" 
         color="primary" 
         label="Cadastrar Administrador"
-        @click="$router.push({ name: 'admin.auxiliares' })"
+        @click="$router.push({ name: 'admin.novo.admin' })"
         />
       </template>
     </q-table>
 
+    <!-- DIALOG DE VISUALIZAR USUARIO -->
     <q-dialog v-model="show_dialog">
       <q-card style="width: 600px; max-width: 60vw;">
         <q-card-section class="row items-center justify-between q-pb-sm no-wrap">
@@ -89,7 +93,13 @@
               <q-item >
                 <q-item-section>
                     <q-item-label class="q-pb-xs">Nascimento</q-item-label>
-                    <date-input dense outlined disable :value="new Date(selectedRow.dataNascimento)"></date-input>
+                    <date-input
+                      dense
+                      outlined
+                      disable 
+                      v-model="selectedRow.dataNascimento"
+                      lazy-rules
+                    />
                 </q-item-section>
               </q-item>
               <q-item>
@@ -210,67 +220,76 @@ const filter = ref('');
 export default {
 
     components: {
-        "date-input": DateInput
+      DateInput
     },
 
     data() {
         return {
-            rows: [],
-            selectedRow: new Administrador(),
-            show_dialog: false,
-            show_delete: false
+          rows: [],
+          selectedRow: new Administrador(),
+          show_dialog: false,
+          show_delete: false
         }
     },
     methods: {
-        viewRow(props) {
-            console.log(props.row);
-            this.selectedRow = props.row;
-            this.show_dialog = true;
-            console.log(this.selectedRow);
-        },
-        editRow(props) {
-            console.log(`EDITANDO ${JSON.stringify(props.row)}`);
-        },
-        deleteRow(props) {
-            console.log(`EXCLUINDO ${JSON.stringify(props.row)}`);
-            this.selectedRow = props.row;
-            this.show_delete = true;
-        },
-        updateRow() {
-
-        },
-        getRows() {
-            loading.value = true;
-            this.$api.get('admin')
-            .then(res => {
-                this.rows = res.data.administradores.map(adm => {
-                        return Object.keys(adm).reduce((obj, key) => {
-                            const value = adm[key]; // ler o valor
-                            if (key === 'idUsuario') key = 'id'; // mudar o nome da chave
-                            obj[key] = value;
-                            return obj;
-                        }, {}); 
-                    }
-                )
-            }, err => console.log(err));
-            loading.value = false;
-        },
-        async handleDelete(row) {
-            await this.$api.delete(`admin/${row.id}`);
-            this.getRows();
+      viewRow(props) {
+        // chamar dialog de visualização
+        this.selectedRow = props.row;
+        this.show_dialog = true;
+      },
+      editRow(props) {
+        // chamar tela de edição
+        this.$router.push({ 
+            name: 'admin.editar.admin', 
+            params: { 
+              id: props.row.id 
+            } 
+          }
+        )
+      },
+      deleteRow(props) {
+        // chamar dialog de consirmação
+        this.selectedRow = props.row;
+        this.show_delete = true;
+      },
+      getRows() {
+          // faz um request na api para obter todos os administradores
+          loading.value = true;
+          this.$api.get('admin')
+          .then(res => {
+            this.rows = res.data.administradores;
+          }, err => console.log(err));
+          loading.value = false;
+      },
+      async handleDelete(row) {
+        // deleta o usuario do banco
+        try {
+          await this.$api.delete(`admin/${row.id}`);
+          this.$q.notify({
+            type: "positive",
+            message: "Usuario Excluido!"
+          })
+          this.getRows();
+        } catch(err) {
+          this.$q.notify({
+            type: "negative",
+            message: err.response.data.message || err.message
+          })
         }
+          
+      }
 
     },
-    setup () {
-        return {
+    setup() {
+      return {
         initialPagination,
         filter,
         columns,
         loading
-        }
+      }
     },
     created() {
-        this.getRows();
+      this.getRows();
     }
 }
 </script>

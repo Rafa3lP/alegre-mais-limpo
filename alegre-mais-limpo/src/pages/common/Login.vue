@@ -93,7 +93,6 @@ export default {
                     this.$router.push({name: routeName});
                 }
             } catch (error) {
-                console.log(error);
                 if(error.response) {
                     this.$q.notify({
                         type: "negative",

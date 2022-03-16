@@ -35,7 +35,27 @@ const routes = [
         name: 'admin.motoristas',
         path: "motoristas",
         component: () => import("../pages/admin/motoristas/ListarMotoristas.vue"),
-      }
+      },
+      {
+        name: 'admin.novo.admin',
+        path: "novo",
+        component: () => import("../pages/admin/ManterAdministrador.vue"),
+      },
+      {
+        name: 'admin.editar.admin',
+        path: "editar/:id",
+        component: () => import("../pages/admin/ManterAdministrador.vue"),
+      },
+      {
+        name: 'admin.novo.auxiliar',
+        path: "auxiliares/novo",
+        component: () => import("../pages/admin/auxiliares/ManterAuxiliar.vue"),
+      },
+      {
+        name: 'admin.editar.auxiliar',
+        path: "auxiliares/editar/:id",
+        component: () => import("../pages/admin/auxiliares/ManterAuxiliar.vue"),
+      },
     ]
   },
   { 
