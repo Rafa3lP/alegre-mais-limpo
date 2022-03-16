@@ -1,0 +1,1 @@
+export const required = val => !!val || 'Preencha o campo!';

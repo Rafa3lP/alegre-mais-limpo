@@ -4,9 +4,11 @@
   "description": "backend da aplicacao alegre-mais-limpo utilizando mysql",
   "main": "server.js",
   "scripts": {
+    "dev": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js"
+    "start": "npm run dev"
   },
+
   "keywords": [
     "mysql",
     "backend",
@@ -20,6 +22,7 @@
     "node"
   ],
   "author": "Rafael de Andrade Prenholato",
+  "repository": "https://github.com/Rafa3lP/alegre-mais-limpo",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.26.0",

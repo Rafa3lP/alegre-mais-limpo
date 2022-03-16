@@ -92,6 +92,19 @@
               </q-item>
               <q-item >
                 <q-item-section>
+                  <q-checkbox
+                    name="servicoComunitario"
+                    v-model="selectedRow.servicoComunitario"
+                    :true-value="1"
+                    :false-value="0"
+                    disable
+                    dense
+                    label="Serviço Comunitário"
+                  />
+                </q-item-section>
+              </q-item>
+              <q-item >
+                <q-item-section>
                     <q-item-label class="q-pb-xs">Nascimento</q-item-label>
                     <date-input
                       dense

@@ -35,7 +35,7 @@ exports.create = async (req, res, next) => {
             return res.status(409).send({message: "Usuario já cadastrado"});
         }
 
-        const hash = await bcrypt.hashSync(req.body.senha, 10);
+        const hash = bcrypt.hashSync(req.body.senha, 10);
 
         const cidadeData = ({ nome, uf } = req.body.endereco.cidade);
         const enderecoData = Object.assign({},{ 
@@ -116,14 +116,14 @@ exports.login = async (req, res, next) => {
             return res.status(406).send({ message: 'Este nome de usuário não existe' })
         }
 
-        if (await bcrypt.compareSync(req.body.senha, results[0].senha)) {
+        if (bcrypt.compareSync(req.body.senha, results[0].senha)) {
             const token = jwt.sign({
                 idUsuario: results[0].idUsuario,
                 usuario: results[0].usuario
             },
             process.env.JWT_KEY,
             {
-                expiresIn: "1h"
+                expiresIn: "365d"
             });
             return res.status(200).send({
                 idUsuario: results[0].idUsuario,
@@ -141,7 +141,7 @@ exports.login = async (req, res, next) => {
 
 exports.getUser = async (req, res, next) => {
     try {
-        console.log(req.body);
+        
         const query = 'SELECT idUsuario, nome, nivelDeAcesso FROM usuario WHERE idUsuario = ?;';
         
         let idUsuario;
@@ -162,7 +162,7 @@ exports.getUser = async (req, res, next) => {
         const response = {...result[0]};
         return res.status(200).send(response);
     } catch (error) {
-        console.log(error.status);
+        console.log(error);
         return res.status(500).send({ error: error });
     }
 };

@@ -43,7 +43,7 @@ export default route(function ( { store, ssrContext } ) {
         }
       );
     }
-   /* if(to.matched.some(record => record.meta.requireAdmin) && store.getters['auth/getNivelDeAcesso'] != 1) {
+    if(to.matched.some(record => record.meta.requireAdmin) && store.getters['auth/getNivelDeAcesso'] != 1) {
       return next(
         {
           name: 'login', 
@@ -52,7 +52,7 @@ export default route(function ( { store, ssrContext } ) {
           }
         }
       );
-    }*/
+    }
     if(to.matched.some(record => record.meta.requireAux) && store.getters['auth/getNivelDeAcesso'] != 2) {
       return next(
         {

@@ -27,24 +27,19 @@ const routes = [
         component: () => import("../pages/admin/ListarAdministradores.vue"),
       },
       {
-        name: 'admin.auxiliares',
-        path: "auxiliares",
-        component: () => import("../pages/admin/auxiliares/ListarAuxiliares.vue"),
-      },
-      {
-        name: 'admin.motoristas',
-        path: "motoristas",
-        component: () => import("../pages/admin/motoristas/ListarMotoristas.vue"),
-      },
-      {
         name: 'admin.novo.admin',
-        path: "novo",
+        path: "administradores/novo",
         component: () => import("../pages/admin/ManterAdministrador.vue"),
       },
       {
         name: 'admin.editar.admin',
-        path: "editar/:id",
+        path: "administradores/editar/:id",
         component: () => import("../pages/admin/ManterAdministrador.vue"),
+      },
+      {
+        name: 'admin.auxiliares',
+        path: "auxiliares",
+        component: () => import("../pages/admin/auxiliares/ListarAuxiliares.vue"),
       },
       {
         name: 'admin.novo.auxiliar',
@@ -56,6 +51,22 @@ const routes = [
         path: "auxiliares/editar/:id",
         component: () => import("../pages/admin/auxiliares/ManterAuxiliar.vue"),
       },
+      {
+        name: 'admin.motoristas',
+        path: "motoristas",
+        component: () => import("../pages/admin/motoristas/ListarMotoristas.vue"),
+      },
+      {
+        name: 'admin.novo.motorista',
+        path: "motoristas/novo",
+        component: () => import("../pages/admin/motoristas/ManterMotorista.vue"),
+      },
+      {
+        name: 'admin.editar.motorista',
+        path: "motoristas/editar/:id",
+        component: () => import("../pages/admin/motoristas/ManterMotorista.vue"),
+      },
+
     ]
   },
   { 

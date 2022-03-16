@@ -20,6 +20,13 @@
             lazy-rules
             :rules="[ val => val && val.length > 2 || 'O nome deve ter no mínimo 3 caracteres']"
           />
+          <q-checkbox
+            class="q-mb-md"
+            v-model="auxiliar.servicoComunitario"
+            :true-value="1"
+            :false-value="0"
+            label="Serviço Comunitário"
+          />
           <date-input
             filled 
             label="Data de Nascimento"
@@ -102,7 +109,7 @@
           />
           <div class="float-right">
             <q-btn v-if="!editing" label="Limpar" type="reset" color="primary" flat class="q-ml-sm" />
-            <q-btn label="Cadastrar" type="submit" color="primary"/>
+            <q-btn :label="editing ? 'Salvar' : 'Cadastrar'" type="submit" color="primary"/>
           </div>
         </q-form>
       </q-card>
@@ -188,7 +195,7 @@ export default {
       try {
         if(this.editing) {
           // atualiza usuario existente
-          await this.$api.put(`/admin/${this.auxiliar.id}`, this.auxiliar);
+          await this.$api.put(`/auxiliar/${this.auxiliar.id}`, this.auxiliar);
           this.$q.notify({
             type: "positive",
             message: "Atualizado com sucesso!"

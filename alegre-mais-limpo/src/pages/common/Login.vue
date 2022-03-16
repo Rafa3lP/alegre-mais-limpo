@@ -45,7 +45,6 @@
 </template>
 
 <script>
-import { useQuasar } from 'quasar';
 import { mapActions, mapGetters } from 'vuex';
 export default {
     data() {

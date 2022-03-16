@@ -245,7 +245,7 @@ exports.update = async (req, res, next) => {
         query = `
         UPDATE auxiliar 
         SET
-        servicoComunitario = ?, 
+        servicoComunitario = ? 
         WHERE idAuxiliar = ?`;
 
         auxiliarData['id'] = id;
@@ -266,7 +266,7 @@ exports.update = async (req, res, next) => {
             query += `, senha = ?`
         }
 
-        query += ` WHERE idUsuario = ? AND nivelDeAcesso = 1`
+        query += ` WHERE idUsuario = ? AND nivelDeAcesso = 2`
 
         userData['id'] = id;
         

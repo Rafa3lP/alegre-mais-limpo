@@ -1,10 +1,10 @@
 <template>
   <div class="q-pa-md">
     <div v-if="!editing" class="text-h4 q-pa-md row justify-center text-primary">
-      Novo Administrador
+      Novo Motorista
     </div>
     <div v-else class="text-h4 q-pa-md row justify-center text-primary">
-      Editar Administrador
+      Editar Motorista
     </div>
     <div class="row justify-center">
       <q-card class="q-pa-md" style="width: 800px;">
@@ -15,28 +15,38 @@
         >
           <q-input
             filled
-            v-model="administrador.nome"
+            v-model="motorista.nome"
             label="Nome"
             lazy-rules
-            :rules="[ val => val && val.length > 2 || 'O nome deve ter no mínimo 3 caracteres']"
+            :rules="[ required ]"
+          />
+          <q-input
+            filled
+            v-model="motorista.numCarteira"
+            label="Número da Carteira"
+            lazy-rules
+            mask="###########"
+            :rules="[ required ]"
           />
           <date-input
             filled 
             label="Data de Nascimento"
-            v-model="administrador.dataNascimento"
+            v-model="motorista.dataNascimento"
             lazy-rules
+            :rules="[ required ]"
           />
           <q-input
             filled
-            v-model="administrador.cpf"
+            v-model="motorista.cpf"
             label="CPF"
             lazy-rules
             mask="###.###.###-##"
             unmasked-value
+            :rules="[ required ]"
           />
           <q-input
             filled
-            v-model="administrador.usuario"
+            v-model="motorista.usuario"
             label="Usuario"
             lazy-rules
             :rules="[ val => val && val.length > 2 || 'O usuario deve ter no mínimo 3 caracteres']"
@@ -44,47 +54,51 @@
           <q-input
             type="password"
             filled
-            v-model="administrador.senha"
+            v-model="motorista.senha"
             :label="editing ? 'Alterar Senha' : 'Senha'"
             lazy-rules
             :rules="editing ? [] : [ val => val && val.length > 2 || 'A senha deve ter no mínimo 3 caracteres']"
           />
           <q-input
             filled
-            v-model="administrador.bairro"
+            v-model="motorista.bairro"
             label="Bairro"
             lazy-rules
+            :rules="[ required ]"
           />
           <q-input
             filled
-            v-model="administrador.logradouro"
+            v-model="motorista.logradouro"
             label="Logradouro"
             lazy-rules
+            :rules="[ required ]"
           />
           <q-input
             type="number"
             filled
-            v-model="administrador.numero"
+            v-model="motorista.numero"
             label="Numero"
             lazy-rules
+            :rules="[ required ]"
           />
           <q-input
             filled
-            v-model="administrador.complemento"
+            v-model="motorista.complemento"
             label="Complemento"
             lazy-rules
           />
           <q-input
             filled
-            v-model="administrador.cep"
+            v-model="motorista.cep"
             label="CEP"
             lazy-rules
             mask="#####-###"
             unmasked-value
+            :rules="[ required ]"
           />
           <q-select
             filled 
-            v-model="administrador.uf"
+            v-model="motorista.uf"
             emit-value
             map-options
             :options="estados"
@@ -95,7 +109,7 @@
           />
           <q-select
             filled
-            v-model="administrador.cidade"
+            v-model="motorista.cidade"
             :options="cidades"
             label="Cidade"
             behavior="menu"
@@ -111,9 +125,10 @@
 </template>
 
 <script>
-import Administrador from 'src/model/Administrador'
-import DateInput from '../../components/DateInput.vue'
-import brasil from "../../utils/brasil";
+import Motorista from 'src/model/Motorista'
+import DateInput from '../../../components/DateInput.vue'
+import brasil from "../../../utils/brasil";
+import { required } from "../../../utils/rules";
 
 const estados = [
   { value: null, label: "Selecione um estado" },
@@ -156,7 +171,7 @@ export default {
       estados,
       cidades: [],
       brasil,
-      administrador: new Administrador(),
+      motorista: new Motorista(),
       editing: false,
     }
   },
@@ -164,23 +179,24 @@ export default {
     //retorna o objeto do estado de acordo com o uf do usuario
     estado: function() {
       return estados.filter(
-        (obj) => obj.value === this.administrador.uf
+        (obj) => obj.value === this.motorista.uf
       )[0];
     }
     
   },
   methods: {
+    required,
     async getUser() {
       try {
-        const response = await this.$api.get(`admin/${this.administrador.id}`);
-        this.administrador = response.data;
+        const response = await this.$api.get(`motorista/${this.motorista.id}`);
+        this.motorista = response.data;
       } catch(err) {
         this.$q.notify({
           type: "negative",
           message: "Não foi possível obter o usuario"
         })
         this.$router.push({
-          name: 'admin.administradores'
+          name: 'admin.motoristas'
         });
       }
     },
@@ -188,21 +204,21 @@ export default {
       try {
         if(this.editing) {
           // atualiza usuario existente
-          await this.$api.put(`/admin/${this.administrador.id}`, this.administrador);
+          await this.$api.put(`/motorista/${this.motorista.id}`, this.motorista);
           this.$q.notify({
             type: "positive",
             message: "Atualizado com sucesso!"
           });
         } else {
           // cria novo usuario
-          await this.$api.post('/admin', this.administrador);
+          await this.$api.post('/motorista', this.motorista);
           this.$q.notify({
             type: "positive",
             message: "Cadastrado com sucesso!"
           });
         }
         this.$router.push({
-          name: 'admin.administradores'
+          name: 'admin.motoristas'
         });
       }catch(err) {
         this.$q.notify({
@@ -213,7 +229,7 @@ export default {
 
     },
     onReset() {
-      this.administrador = new Administrador();
+      this.motorista = new Motorista();
     },
   },
   watch: {
@@ -222,8 +238,8 @@ export default {
     }
   },
   created() {
-    this.administrador.id = this.$route.params.id;
-    if(this.administrador.id) {
+    this.motorista.id = this.$route.params.id;
+    if(this.motorista.id) {
       this.editing = true;
       this.getUser();
     }
