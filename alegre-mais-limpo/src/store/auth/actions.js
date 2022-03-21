@@ -22,10 +22,10 @@ export const getUser = async ({ commit, dispatch }, token) => {
         params: {
             token: token
         }
-    }).then(response => {
-        commit('setUser', response.data);
-    }, err => {
-        dispatch('signOut');
+    }).then(async(response) => {
+        await commit('setUser', response.data);
+    }, async(err) => {
+        await dispatch('signOut');
     });
 }
 

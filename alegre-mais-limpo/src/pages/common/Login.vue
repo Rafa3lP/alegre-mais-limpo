@@ -56,7 +56,7 @@ export default {
     },
     methods: {
         ...mapActions('auth', ['doLogin']),
-        ...mapGetters('auth', ['getNivelDeAcesso']),
+        ...mapGetters('auth', ['getNivelDeAcesso','isAuthenticated']),
         async login() {
             const login = {
                 usuario: this.usuario, 
@@ -70,27 +70,8 @@ export default {
                     message: "Logado com sucesso!"
                 });
 
-                let routeName = '';
+                this.redirect();
                 
-                switch(this.getNivelDeAcesso()) {
-                    case 1:
-                        routeName = 'admin';
-                        break;
-                    case 2:
-                        routeName = 'auxiliar';
-                        break;
-                    case 3:
-                        routeName = 'motorista';
-                        break;
-                    default:
-                        routeName = '';
-                        break;
-                }
-                if(this.$route.query.to) {
-                    this.$router.push(this.$route.query.to);    
-                } else {
-                    this.$router.push({name: routeName});
-                }
             } catch (error) {
                 if(error.response) {
                     this.$q.notify({
@@ -101,6 +82,34 @@ export default {
                 
             }
             
+        },
+        redirect() {
+           
+            let routeName = '';
+            switch(this.getNivelDeAcesso()) {
+                case 1:
+                    routeName = 'admin';
+                    break;
+                case 2:
+                    routeName = 'auxiliar';
+                    break;
+                case 3:
+                    routeName = 'motorista';
+                    break;
+                default:
+                    routeName = '';
+                    break;
+            }
+            if(this.$route.query.to) {
+                this.$router.push(this.$route.query.to);    
+            } else {
+                this.$router.push({name: routeName});
+            }
+        }
+    },
+    created() {
+        if(this.isAuthenticated) {
+            this.redirect();
         }
     }
 }

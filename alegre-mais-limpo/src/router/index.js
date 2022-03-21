@@ -32,7 +32,7 @@ export default route(function ( { store, ssrContext } ) {
     ),
   });
 
-  Router.beforeEach((to, from, next) => {
+  Router.beforeResolve((to, from, next) => {
     if(to.matched.some(record => record.meta.requireLogin) && !store.getters['auth/isAuthenticated']) {
       return next(
         {

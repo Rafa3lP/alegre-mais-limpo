@@ -95,7 +95,7 @@ export default defineComponent({
     }
   },
   computed: {
-    ...mapGetters('auth', ['isAuthenticated', 'getNivelDeAcesso'])
+    ...mapGetters('auth', ['isAuthenticated', 'getNivelDeAcesso', 'getUser'])
   },
   created() {
     this.setLinks();
