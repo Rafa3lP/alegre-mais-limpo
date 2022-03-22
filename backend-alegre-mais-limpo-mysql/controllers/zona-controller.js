@@ -6,7 +6,7 @@ exports.create = async (req, res, next) => {
     try {
         const query = 'INSERT INTO zona (nome) VALUES (?)';
         const result = await mysql.execute(query, [
-            req.body.nome,
+            req.body.nome
         ]);
 
         const response = {
