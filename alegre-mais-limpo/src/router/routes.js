@@ -66,6 +66,21 @@ const routes = [
         path: "motoristas/editar/:id",
         component: () => import("../pages/admin/motoristas/ManterMotorista.vue"),
       },
+      {
+        name: 'admin.caminhoes',
+        path: "caminhoes",
+        component: () => import("../pages/admin/caminhoes/ListarCaminhoes.vue"),
+      },
+      {
+        name: 'admin.novo.caminhao',
+        path: "caminhoes/novo",
+        component: () => import("../pages/admin/caminhoes/ManterCaminhoes.vue"),
+      },
+      {
+        name: 'admin.editar.caminhao',
+        path: "caminhoes/editar/:id",
+        component: () => import("../pages/admin/caminhoes/ManterCaminhoes.vue"),
+      },
 
     ]
   },

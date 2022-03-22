@@ -8,6 +8,7 @@ const zonaRoute = require('./routes/zona-route');
 const adminRoute = require('./routes/admin-route');
 const auxiliarRoute = require('./routes/auxiliar-route');
 const motoristaRoute = require('./routes/motorista-route');
+const caminhaoRoute = require('./routes/caminhao-route');
 
 /*const categoryRoute = require('./routes/category-route');
 const orderRoute = require('./routes/order-route');
@@ -38,6 +39,7 @@ app.use('/zona', zonaRoute);
 app.use('/admin', adminRoute);
 app.use('/auxiliar', auxiliarRoute);
 app.use('/motorista', motoristaRoute);
+app.use('/caminhao', caminhaoRoute);
 
 app.use((req, res, next) => {
     const erro = new Error('Não encontrado');

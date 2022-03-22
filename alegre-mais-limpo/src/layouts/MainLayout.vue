@@ -75,6 +75,11 @@ export default defineComponent({
               title: "Motoristas",
               icon: "person_outline",
               to: "admin.motoristas",
+            },
+            {
+              title: "Caminhões",
+              icon: "local_shipping",
+              to: "admin.caminhoes",
             }
           ]
           break;
