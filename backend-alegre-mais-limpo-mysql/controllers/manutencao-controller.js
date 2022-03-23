@@ -2,16 +2,16 @@ const mysql = require('../mysql');
 
 exports.create = async (req, res, next) => {
     try {
-        //verificando se o caminhão está cadastrado
-        var query = 'SELECT idCaminhaoColeta  FROM caminhaoColeta WHERE placa = ?';
+        //verificando se o manutenção está cadastrado
+        var query = 'SELECT idManutencaoColeta  FROM manutencaoColeta WHERE placa = ?';
         var result = await mysql.execute(query, [req.body.placa]);
 
         if (result.length == 0) {
-            return res.status(409).send({ message: "Caminhão não cadastrada" });
+            return res.status(409).send({ message: "Manutenção não cadastrada" });
         }
 
         const ManutencaoData = Object.assign({}, {
-            idCaminhoColeta: result.idCaminhoColeta,
+            idManutencaoColeta: result.idManutencaoColeta,
             data: req.body.data,
             quilometragem: req.body.quilometragem,
             descricao: req.body.descricao,
@@ -19,7 +19,7 @@ exports.create = async (req, res, next) => {
         });
 
         query = `INSERT INTO manutencao
-        (idCaminhaoColeta, data, quilometragem, descricao, valor)
+        (idManutencaoColeta, data, quilometragem, descricao, valor)
         VALUES (?, ?, ?, ?, ?)`;
 
         const response = await mysql.execute(query, Object.values(ManutencaoData));

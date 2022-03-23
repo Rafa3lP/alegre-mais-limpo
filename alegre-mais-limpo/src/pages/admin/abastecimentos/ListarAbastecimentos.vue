@@ -1,17 +1,17 @@
 <template>
   <div class="q-pa-md">
     <div class="text-h4 q-pa-md row justify-center text-primary">
-      Caminhões
+      Abastecimentos
     </div>
     <q-table
       :grid="$q.screen.xs"
       dense
-      title="Caminhões"
+      title="Abastecimentos"
       :rows="rows"
       :columns="columns"
       row-key="id"
       :filter="filter"
-      no-data-label="Nenhum Caminhão Encontrado"
+      no-data-label="Nenhum Abastecimento Encontrado"
       no-results-label="O filtro não obteve nenhum resultado"
       :loading="loading"
       :pagination="initialPagination"
@@ -62,13 +62,13 @@
         <q-btn
             class="q-ma-md" 
             color="primary" 
-            label="Cadastrar Caminhao"
-            @click="$router.push({ name: 'admin.novo.caminhao' })"
+            label="Cadastrar Abastecimento"
+            @click="$router.push({ name: 'admin.novo.abastecimento' })"
         />
       </template>
     </q-table>
 
-    <!-- DIALOG DE VISUALIZAR CAMINHÕES -->
+    <!-- DIALOG DE VISUALIZAR USUARIO -->
     <q-dialog v-model="show_dialog">
       <q-card style="width: 600px; max-width: 60vw;">
         <q-card-section class="row items-center justify-between q-pb-sm no-wrap">
@@ -160,23 +160,22 @@
 
 <script>
 import { ref } from 'vue'
-import Caminhao from '../../../model/Caminhao'
+import Abastecimento from '../../../model/Abastecimento'
 
 const columns = [
     {
-        name: 'placa',
+        name: 'caminhao',
         required: true,
-        label: 'Placa',
+        label: 'Caminhão',
         align: 'left',
-        field: 'placa',
+        field: 'caminhao',
     },
     {
-        name: 'situacao',
+        name: 'abastecimento',
         required: true,
-        label: 'Situação',
+        label: 'Abastecimento',
         align: 'left',
-        field: 'situacao',
-        format: (val, row) => val == '1' ? 'Disponível' : 'Indisponível'
+        field: 'abastecimento',
     },
     { 
         name: 'actions', 
@@ -200,7 +199,7 @@ export default {
     data() {
         return {
           rows: [],
-          selectedRow: new Caminhao(),
+          selectedRow: new Abastecimento(),
           show_dialog: false,
           show_delete: false
         }
@@ -214,7 +213,7 @@ export default {
       editRow(props) {
         // chamar tela de edição
         this.$router.push({ 
-            name: 'admin.editar.caminhao', 
+            name: 'admin.editar.abastecimento', 
             params: { 
               id: props.row.id 
             } 
@@ -229,19 +228,19 @@ export default {
       getRows() {
           // faz um request na api para obter todos os administradores
           loading.value = true;
-          this.$api.get('caminhao')
+          this.$api.get('abastecimento')
           .then(res => {
-            this.rows = res.data.caminhoes;
+            this.rows = res.data.abastecimentos;
           }, err => console.log(err));
           loading.value = false;
       },
       async handleDelete(row) {
-        // deleta o caminhão do banco
+        // deleta o usuario do banco
         try {
-          await this.$api.delete(`caminhao/${row.id}`);
+          await this.$api.delete(`abastecimento/${row.id}`);
           this.$q.notify({
             type: "positive",
-            message: "Caminhão Excluido!"
+            message: "Abastecimento Excluido!"
           })
           this.getRows();
         } catch(err) {

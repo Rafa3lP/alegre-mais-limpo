@@ -1,10 +1,10 @@
 <template>
   <div class="q-pa-md">
     <div v-if="!editing" class="text-h4 q-pa-md row justify-center text-primary">
-      Novo Caminhão
+      Novo Abastecimento
     </div>
     <div v-else class="text-h4 q-pa-md row justify-center text-primary">
-      Editar Caminhão
+      Editar Abastecimento
     </div>
     <div class="row justify-center">
       <q-card class="q-pa-md" style="width: 800px;">
@@ -15,47 +15,58 @@
         >
           <q-input
             filled
-            v-model="caminhao.placa"
+            v-model="abastecimento.placa"
             label="Placa"
             lazy-rules
             mask="XXX-XXXX"
             unmasked-value
             :rules="[ val => val && val.length == 7 || 'Placa inválida']"
           />
-          <q-checkbox
-            class="q-mb-md"
-            name="situacao"
-            v-model="caminhao.situacao"
-            true-value="1"
-            false-value="0"
-            label="Ativo"
+          <!--verificar se funciona-->
+          <q-date v-model="date" />
+          <q-date
+              v-model="abastecimento.data"
+              minimal
+              filled
+              label="Data do abastecimento"
+              lazy-rules
           />
+          <!--verificar se funciona-->
+          <!--<q-input
+              type="number"
+              min="1900" 
+              :max="new Date().toString()"
+              label="Data do abastecimento"
+              filled
+              v-model="abastecimento.data"
+              lazy-rules
+          />-->
           <q-input
+            type="number"
             filled
-            v-model="caminhao.modelo"
-            label="Modelo"
+            v-model="abastecimento.quantidade"
+            label="Quantidade de combustível"
             lazy-rules
           />
           <q-input
+            type="float"
             filled
-            v-model="caminhao.marca"
-            label="Marca"
+            v-model="abastecimento.valor"
+            label="Valor"
             lazy-rules
           />
           <q-input
             type="number"
-            min="1900" 
-            :max="new Date().getFullYear().toString()"
-            label="Ano"
             filled
-            v-model="caminhao.ano"
-            lazy-rules
-          />
-          <q-input
-            type="number"
-            filled
-            v-model="caminhao.quilometragem"
+            v-model="abastecimento.quilometragem"
             label="Quilometragem"
+            lazy-rules
+          />
+          <q-input
+            type="number"
+            filled
+            v-model="abastecimento.mediaConsumo"
+            label="Média de Consumo"
             lazy-rules
           />
           <div class="float-right">
@@ -69,50 +80,50 @@
 </template>
 
 <script>
-import Caminhao from 'src/model/Caminhao'
+import Abastecimento from 'src/model/Abastecimento'
 
 export default {
   
   data() {
     return {
-      caminhao: new Caminhao(),
+      abastecimento: new Abastecimento(),
       editing: false,
     }
   },
   methods: {
     async getUser() {
       try {
-        const response = await this.$api.get(`caminhao/${this.caminhao.id}`);
-        this.caminhao = response.data;
+        const response = await this.$api.get(`abastecimento/${this.abastecimento.id}`);
+        this.abastecimento = response.data;
       } catch(err) {
         this.$q.notify({
           type: "negative",
-          message: "Não foi possível obter o caminhão"
+          message: "Não foi possível obter o abastecimento"
         })
         this.$router.push({
-          name: 'admin.caminhoes'
+          name: 'admin.abastecimentos'
         });
       }
     },
     async onSubmit() {
       try {
         if(this.editing) {
-          // atualiza o caminhão existente
-          await this.$api.put(`/caminhao/${this.caminhao.id}`, this.caminhao);
+          // atualiza o abastecimento existente
+          await this.$api.put(`/abastecimento/${this.abastecimento.id}`, this.abastecimento);
           this.$q.notify({
             type: "positive",
             message: "Atualizado com sucesso!"
           });
         } else {
-          // cria novo caminhão
-          await this.$api.post('/caminhao', this.caminhao);
+          // cria novo usuario
+          await this.$api.post('/abastecimento', this.abastecimento);
           this.$q.notify({
             type: "positive",
             message: "Cadastrado com sucesso!"
           });
         }
         this.$router.push({
-          name: 'admin.caminhoes'
+          name: 'admin.abastecimentos'
         });
       }catch(err) {
         this.$q.notify({
@@ -123,12 +134,12 @@ export default {
 
     },
     onReset() {
-      this.caminhao = new Caminhao();
+      this.abastecimento = new Abastecimento();
     },
   },
   created() {
-    this.caminhao.id = this.$route.params.id;
-    if(this.caminhao.id) {
+    this.abastecimento.id = this.$route.params.id;
+    if(this.abastecimento.id) {
       this.editing = true;
       this.getUser();
     }
