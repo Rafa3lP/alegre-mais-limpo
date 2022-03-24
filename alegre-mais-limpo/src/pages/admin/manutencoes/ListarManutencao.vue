@@ -173,6 +173,20 @@ const columns = [
         align: 'left',
         field: 'placa',
     },
+    {
+      name: 'quilometragem',
+      label: 'Quilometragem',
+      align: 'left',
+      field: 'quilometragem'
+    },
+    {
+      name: 'data',
+      label: 'Data',
+      align: 'left',
+      field: 'data',
+      format: (val) => new Date(val).toLocaleDateString(),
+      sortable: true
+    },
     { 
         name: 'actions', 
         label: 'Ações', 
