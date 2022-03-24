@@ -33,6 +33,8 @@ export default route(function ( { store, ssrContext } ) {
   });
 
   Router.beforeResolve((to, from, next) => {
+    /*console.log(`autenticado: ${store.getters['auth/isAuthenticated']}`);
+    console.log(`nivel de acesso: ${store.getters['auth/getNivelDeAcesso']}`);*/
     if(to.matched.some(record => record.meta.requireLogin) && !store.getters['auth/isAuthenticated']) {
       return next(
         {
