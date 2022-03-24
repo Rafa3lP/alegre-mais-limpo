@@ -15,7 +15,7 @@
         >
           <q-input
             filled
-            v-model="zona.nomeZona"
+            v-model="zona.nome"
             label="Nome da Zona"
             lazy-rules
           />
@@ -41,7 +41,7 @@ export default {
     }
   },
   methods: {
-    async getUser() {
+    async getZona() {
       try {
         const response = await this.$api.get(`zona/${this.zona.id}`);
         this.zona = response.data;
@@ -91,7 +91,7 @@ export default {
     this.zona.id = this.$route.params.id;
     if(this.zona.id) {
       this.editing = true;
-      this.getUser();
+      this.getZona();
     }
   }
 }

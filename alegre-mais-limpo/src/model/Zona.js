@@ -1,8 +1,9 @@
 export default class Zona {
     constructor(
         id = '',
-        nomeZona = ''
+        nome = ''
     ){
-        this.nomeZona = nomeZona;
+        this.id = id;
+        this.nome = nome;
     }
 }

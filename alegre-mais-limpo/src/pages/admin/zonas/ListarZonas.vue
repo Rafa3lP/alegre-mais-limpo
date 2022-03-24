@@ -11,7 +11,7 @@
       :columns="columns"
       row-key="id"
       :filter="filter"
-      no-data-label="Nenhum Zona Encontrado"
+      no-data-label="Nenhuma Zona Encontrado"
       no-results-label="O filtro não obteve nenhum resultado"
       :loading="loading"
       :pagination="initialPagination"
@@ -87,8 +87,8 @@
 
               <q-item>
                 <q-item-section>
-                  <q-item-label class="q-pb-xs">Zona</q-item-label>
-                  <q-input dense outlined disable v-model="selectedRow.nomeZona" />
+                  <q-item-label class="q-pb-xs">Nome da Zona</q-item-label>
+                  <q-input dense outlined disable v-model="selectedRow.nome" />
                 </q-item-section>
               </q-item>
 
@@ -128,11 +128,11 @@ import Zona from '../../../model/Zona'
 
 const columns = [
     {
-        name: 'zona',
+        name: 'nome',
         required: true,
         label: 'Zona',
         align: 'left',
-        field: 'zona',
+        field: 'nome',
     },
     { 
         name: 'actions', 

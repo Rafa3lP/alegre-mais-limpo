@@ -30,7 +30,7 @@ exports.create = async (req, res, next) => {
     }
 }
 
-exports.getCaminhoes = async (req, res, next) => {
+exports.getManutencoes = async (req, res, next) => {
     try {
 
         const query = `SELECT m.idManutencao, id, c.placa, m.data, m.quilometragem,
@@ -48,7 +48,7 @@ exports.getCaminhoes = async (req, res, next) => {
     }
 };
 
-exports.getAbastecimentoById = async (req, res, next) => {
+exports.getManutencaoById = async (req, res, next) => {
     try {
         const { id } = req.params;
 

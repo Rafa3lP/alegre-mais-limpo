@@ -87,7 +87,13 @@
               <q-item >
                 <q-item-section>
                   <q-item-label class="q-pb-xs">Nome da Rua</q-item-label>
-                  <q-input dense outlined disable v-model="selectedRow.nomeRua" />
+                  <q-input dense outlined disable v-model="selectedRow.nome" />
+                </q-item-section>
+              </q-item>
+              <q-item >
+                <q-item-section>
+                  <q-item-label class="q-pb-xs">Complemento</q-item-label>
+                  <q-input dense outlined disable v-model="selectedRow.complemento" />
                 </q-item-section>
               </q-item>
               <q-item>
@@ -96,10 +102,16 @@
                   <q-input dense outlined disable v-model="selectedRow.qtdCasas" />
                 </q-item-section>
               </q-item>
+              <q-item>
+                <q-item-section>
+                  <q-item-label class="q-pb-xs">Quantidade de Latas de Lixo</q-item-label>
+                  <q-input dense outlined disable v-model="selectedRow.qtdLatasLixo" />
+                </q-item-section>
+              </q-item>
               <q-item >
                 <q-item-section>
-                  <q-item-label class="q-pb-xs">Nome da Zona</q-item-label>
-                  <q-input dense outlined disable v-model="selectedRow.nomeZona" />
+                  <q-item-label class="q-pb-xs">Zona</q-item-label>
+                  <q-input dense outlined disable v-model="selectedRow.zona" />
                 </q-item-section>
               </q-item>
           </q-form>
@@ -139,11 +151,11 @@ import Rua from '../../../model/Rua'
 
 const columns = [
     {
-        name: 'nomeRua',
+        name: 'nome',
         required: true,
         label: 'Rua',
         align: 'left',
-        field: 'nomeRua',
+        field: 'nome',
         sortable: true
     },
     {
@@ -154,11 +166,19 @@ const columns = [
         field: 'qtdCasas',
     },
     {
-        name: 'nomeZona',
+        name: 'qtdLatasLixo',
+        required: true,
+        label: 'Quantidade de Latas de Lixo',
+        align: 'left',
+        field: 'qtdLatasLixo',
+    },
+    {
+        name: 'zona',
         required: true,
         label: 'Zona',
         align: 'left',
-        field: 'nomeZona',
+        field: 'zona',
+        sortable: true
     },
     { 
         name: 'actions', 
@@ -227,7 +247,7 @@ export default {
           await this.$api.delete(`rua/${row.id}`);
           this.$q.notify({
             type: "positive",
-            message: "Rua Excluido!"
+            message: "Rua Excluida!"
           })
           this.getRows();
         } catch(err) {

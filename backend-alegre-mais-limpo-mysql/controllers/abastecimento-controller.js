@@ -31,7 +31,7 @@ exports.create = async (req, res, next) => {
     }
 }
 
-exports.getCaminhoes = async (req, res, next) => {
+exports.getAbastecimentos = async (req, res, next) => {
     try {
 
         const query = `SELECT a.idAbastecimento id, c.placa, a.data, a.quantidade, 

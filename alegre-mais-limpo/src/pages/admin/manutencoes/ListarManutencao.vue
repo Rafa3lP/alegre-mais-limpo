@@ -160,7 +160,7 @@
 
 <script>
 import { ref } from 'vue'
-import manutencao from '../../../model/Manutencao'
+import Manutencao from '../../../model/Manutencao'
 
 const columns = [
     {

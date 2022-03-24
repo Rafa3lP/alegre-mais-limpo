@@ -5,18 +5,18 @@ const login = require('../middleware/login');
 const abastecimentoController = require('../controllers/abastecimento-controller.js');
 
 // criar abastecimento
-router.post('/', abastecimentoController.create);
+router.post('/', login.required, abastecimentoController.create);
 
 // obter abastecimentos
-router.get('/', abastecimentoController.getAbastecimentos);
+router.get('/', login.required, abastecimentoController.getAbastecimentos);
 
 // obter abstecimento por id
-router.get('/:id', abastecimentoController.getAbastecimentoById);
+router.get('/:id', login.required, abastecimentoController.getAbastecimentoById);
 
 // deletar abastecimento
-router.delete('/:id', abastecimentoController.delete);
+router.delete('/:id', login.required, abastecimentoController.delete);
 
 // atualizar abastecimento
-router.put('/:id', abastecimentoController.update);
+router.put('/:id', login.required, abastecimentoController.update);
 
 module.exports = router;

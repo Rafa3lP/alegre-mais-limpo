@@ -5,18 +5,18 @@ const login = require('../middleware/login');
 const motoristaController = require('../controllers/motorista-controller.js');
 
 // criar motorista
-router.post('/', motoristaController.create);
+router.post('/', login.required, motoristaController.create);
 
 // obter motoristas
-router.get('/', motoristaController.getMotoristas);
+router.get('/', login.required, motoristaController.getMotoristas);
 
 // obter motorista por id
-router.get('/:id', motoristaController.getMotoristaById);
+router.get('/:id', login.required, motoristaController.getMotoristaById);
 
 // deletar motorista
-router.delete('/:id', motoristaController.delete);
+router.delete('/:id', login.required, motoristaController.delete);
 
 // atualizar motorista
-router.put('/:id', motoristaController.update);
+router.put('/:id', login.required, motoristaController.update);
 
 module.exports = router;
