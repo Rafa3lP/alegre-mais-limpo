@@ -13,60 +13,60 @@
           @submit.prevent="onSubmit"
           @reset="onReset"
         >
-          <q-input
-            filled
-            v-model="abastecimento.placa"
-            label="Placa"
+          <date-input
+            filled 
+            label="Data"
+            v-model="abastecimento.data"
             lazy-rules
-            mask="XXX-XXXX"
-            unmasked-value
-            :rules="[ val => val && val.length == 7 || 'Placa inválida']"
+            :disable="editing"
           />
-          <!--verificar se funciona-->
-          <q-date v-model="date" />
-          <q-date
-              v-model="abastecimento.data"
-              minimal
-              filled
-              label="Data do abastecimento"
-              lazy-rules
-          />
-          <!--verificar se funciona-->
-          <!--<q-input
-              type="number"
-              min="1900" 
-              :max="new Date().toString()"
-              label="Data do abastecimento"
-              filled
-              v-model="abastecimento.data"
-              lazy-rules
-          />-->
-          <q-input
-            type="number"
-            filled
-            v-model="abastecimento.quantidade"
-            label="Quantidade de combustível"
-            lazy-rules
-          />
-          <q-input
-            type="float"
-            filled
-            v-model="abastecimento.valor"
-            label="Valor"
-            lazy-rules
+          <q-select
+            filled 
+            v-model="abastecimento.idCaminhaoColeta"
+            emit-value
+            map-options
+            :options="caminhoes"
+            option-value="id"
+            option-label="placa"
+            label="Caminhao"
+            behavior="menu"
           />
           <q-input
             type="number"
             filled
             v-model="abastecimento.quilometragem"
+            :max="maxQuilometragem"
             label="Quilometragem"
             lazy-rules
           />
           <q-input
-            type="number"
             filled
-            v-model="abastecimento.mediaConsumo"
-            label="Média de Consumo"
+            :model-value="parseFloat(abastecimento.quantidade).toFixed(2)"
+            @update:modelValue="
+            (val) => {
+              val ? abastecimento.quantidade = (parseFloat(val)/100).toFixed(2) : abastecimento.quantidade = '0'
+            }"
+            fill-mask="0"
+            unmasked-value
+            reverse-fill-mask
+            mask="#.##" 
+            suffix="litros"
+            label="Quantidade"
+            lazy-rules
+          />
+          <q-input
+            filled
+            :model-value="parseFloat(abastecimento.valor).toFixed(2)"
+            @update:modelValue="
+            (val) => {
+              val ? abastecimento.valor = (parseFloat(val)/100).toFixed(2) : abastecimento.valor = '0'
+            }"
+            fill-mask="0"
+            unmasked-value
+            reverse-fill-mask
+            mask="#.##" 
+            prefix="R$ "
+            label="Valor"
             lazy-rules
           />
           <div class="float-right">
@@ -80,25 +80,52 @@
 </template>
 
 <script>
+import DateInput from '../../../components/DateInput.vue'
 import Abastecimento from 'src/model/Abastecimento'
 
 export default {
-  
+  components: {
+    DateInput
+  },
   data() {
     return {
       abastecimento: new Abastecimento(),
       editing: false,
+      caminhoes: []
+    }
+  },
+  computed: {
+    maxQuilometragem: function() {
+      if(!this.abastecimento.idCaminhaoColeta) {
+        return 0;
+      } else {
+        return this.caminhoes.filter((val) => val.id == this.abastecimento.idCaminhaoColeta)[0].quilometragem;
+      }
     }
   },
   methods: {
-    async getUser() {
+    async getCaminhoes() {
+      try {
+        const response = await this.$api.get(`caminhao`);
+        this.caminhoes = response.data.caminhoes;
+      } catch(err) {
+        this.$q.notify({
+          type: "negative",
+          message: "Não foi possível obter os Caminhões"
+        })
+        this.$router.push({
+          name: 'admin.abastecimentos'
+        });
+      }
+    },
+    async getAbastecimento() {
       try {
         const response = await this.$api.get(`abastecimento/${this.abastecimento.id}`);
         this.abastecimento = response.data;
       } catch(err) {
         this.$q.notify({
           type: "negative",
-          message: "Não foi possível obter o abastecimento"
+          message: "Não foi possível encontrar esse abastecimento"
         })
         this.$router.push({
           name: 'admin.abastecimentos'
@@ -115,7 +142,7 @@ export default {
             message: "Atualizado com sucesso!"
           });
         } else {
-          // cria novo usuario
+          // cria novo abastecimento
           await this.$api.post('/abastecimento', this.abastecimento);
           this.$q.notify({
             type: "positive",
@@ -134,15 +161,16 @@ export default {
 
     },
     onReset() {
-      this.abastecimento = new Abastecimento();
+      this.abastecimento = new Manutencao();
     },
   },
   created() {
     this.abastecimento.id = this.$route.params.id;
     if(this.abastecimento.id) {
       this.editing = true;
-      this.getUser();
+      this.getAbastecimento();
     }
+    this.getCaminhoes();
   }
 }
 </script>

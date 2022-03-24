@@ -2,28 +2,40 @@ const mysql = require('../mysql');
 
 exports.create = async (req, res, next) => {
     try {
-        //verificando se o caminhão está cadastrado
-        var query = 'SELECT idCaminhaoColeta  FROM caminhaoColeta WHERE placa = ?';
-        var result = await mysql.execute(query, [req.body.placa]);
-
-        if (result.length == 0) {
-            return res.status(409).send({ message: "Caminhão não cadastrada" });
-        }
-
-        const abstecimentoData = Object.assign({},{
-            idCaminhoColeta: result.idCaminhoColeta,
-            data: req.body.data,
+        
+        const abastecimentoData = Object.assign({}, {
+            idCaminhaoColeta: req.body.idCaminhaoColeta,
+            data: new Date(`${req.body.data}`).toLocaleDateString('en-CA'),
             quantidade: req.body.quantidade,
             valor: req.body.valor,
             quilometragem: req.body.quilometragem,
-            mediaConsumo: req.body.mediaConsumo
         });
 
-        query = `INSERT INTO abstecimento
+        // procurar pelo ultimo abastecimento
+        var query = `
+        SELECT quantidade, quilometragem, MAX(data) AS data
+        FROM abastecimento
+        WHERE idCaminhaoColeta = ? AND data <= ? 
+        GROUP BY quantidade, quilometragem;
+        `;
+
+        var result = await mysql.execute(query, [abastecimentoData.idCaminhaoColeta, abastecimentoData.data])
+
+        if(result.length > 0) {
+            if(result[0].quilometragem > abastecimentoData.quilometragem) {
+                return res.status(409).send({message: "No ultimo abastecimento esse caminhão tinha uma quilometragem maior!"});
+            }
+            // calcular media de consumo
+            abastecimentoData['mediaConsumo'] = (abastecimentoData.quilometragem - result[0].quilometragem) / result[0].quantidade;
+        } else {
+            abastecimentoData['mediaConsumo'] = '0';
+        }
+        
+        query = `INSERT INTO abastecimento
         (idCaminhaoColeta, data, quantidade, valor, quilometragem, mediaConsumo)
         VALUES (?, ?, ?, ?, ?, ?)`;
 
-        const response = await mysql.execute(query, Object.values(abstecimentoData));
+        const response = await mysql.execute(query, Object.values(abastecimentoData));
         return res.status(201).send(response);
 
     } catch (erro) {
@@ -34,14 +46,16 @@ exports.create = async (req, res, next) => {
 exports.getAbastecimentos = async (req, res, next) => {
     try {
 
-        const query = `SELECT a.idAbastecimento id, c.placa, a.data, a.quantidade, 
-        a.valor, a.quilometragem, a.mediaConsumo
-        FROM abastecimento a INNER JOIN caminhoColeta c 
-        ON a.idCaminhoColeta = c.idCaminhoColeta;`;
+        const query = `
+        SELECT a.idAbastecimento id, a.idCaminhaoColeta, c.placa, a.data, a.quantidade, a.valor, 
+        a.quilometragem, a.mediaConsumo 
+        FROM abastecimento a INNER JOIN caminhaoColeta c 
+        ON a.idCaminhaoColeta = c.idCaminhaoColeta;
+        `;
 
         const result = await mysql.execute(query, []);
 
-        const response = { rua: Object.keys(result).map((key) => result[key]) };
+        const response = { abastecimentos: Object.keys(result).map((key) => result[key]) };
         return res.status(200).send(response);
     } catch (error) {
         console.log(error);
@@ -53,15 +67,18 @@ exports.getAbastecimentoById = async (req, res, next) => {
     try {
         const { id } = req.params;
 
-        const query = `SELECT a.idAbastecimento id, c.placa, a.data, a.quantidade, 
-        a.valor, a.quilometragem, a.mediaConsumo
-        FROM abastecimento a INNER JOIN caminhoColeta c 
-        ON a.idCaminhoColeta = c.idCaminhoColeta
-        WHERE a.idAbastecimento = ?;`;
-
-        const result = await mysql.execute(query, [id]);
+        const query = `
+        SELECT a.idAbastecimento id, a.idCaminhaoColeta, c.placa, a.data, a.quantidade, a.valor, 
+        a.quilometragem, a.mediaConsumo 
+        FROM abastecimento a INNER JOIN caminhaoColeta c 
+        ON a.idCaminhaoColeta = c.idCaminhaoColeta 
+        WHERE a.idAbastecimento = ?;
+        `;
+        
+        const result = await mysql.execute(query, [ id ]);
 
         return res.status(200).send(result[0]);
+
     } catch (error) {
         console.log(error.status);
         return res.status(500).send({ error: error });
@@ -90,47 +107,62 @@ exports.update = async (req, res, next) => {
     try {
         const { id } = req.params;
 
-        //Objeto abastecimentoDate sem o id
         const abastecimentoData = Object.assign({}, {
-            data: req.body.data,
+            idCaminhaoColeta: req.body.idCaminhaoColeta,
+            data: new Date(`${req.body.data}`).toLocaleDateString('en-CA'),
             quantidade: req.body.quantidade,
             valor: req.body.valor,
             quilometragem: req.body.quilometragem,
-            mediaConsumo: req.body.mediaConsumo
         });
 
-        //Objeto caminhaoColetaData sem id
-        const caminhaoColetaData = Object.assign({}, {
-            placa: req.body.placa
-        });
+        //verificar se existe o abastecimento
+        var query = `SELECT idAbastecimento FROM abastecimento WHERE idAbastecimento = ?;`;
+        
+        var result = await mysql.execute(query, [ id ]);
 
-        //query para selecionar o id da zona(nome da zona) que foi passado
-        const query = `SELECT idCaminhaoColeta FROM caminhoColeta WHERE placa = ?;`;
-
-        //executando a query
-        const result = await mysql.execute(query, Object.values(caminhaoColetaData));
-
-        //verificando se retornou alguma zona
-        //se não retornou uma zona a zona inserida não está cadastrada
         if(result.length == 0){
-            return res.status(409).send({message: "Não existe uma caminhao com essa placa"});
+            return res.status(409).send({message: "Não existe nenhum abastecimento com esse id!"});
         }
 
-        //atribuindo o idCaminhaoColeta que vei do banco de dados para a constante idCaminhaoColeta
-        const {idCaminhoColeta} = result[0];
+        // verificar se o caminhão existe
+        query = `SELECT idCaminhaoColeta FROM caminhaoColeta WHERE idCaminhaoColeta = ?;`;
 
-        //adicionando o idCaminhaoColeta e o id no objeto abastecimentoDate
-        abastecimentoData['idCaminhoColeta'] = idCaminhoColeta;
+        result = await mysql.execute(query, [ abastecimentoData.idCaminhaoColeta ]);
+
+        if(result.length == 0){
+            return res.status(409).send({message: "Caminhão inválido!"});
+        }
+
+        // procurar pelo ultimo abastecimento
+        var query = `
+        SELECT quantidade, quilometragem, MAX(data) AS data
+        FROM abastecimento
+        WHERE idCaminhaoColeta = ? AND data <= ? 
+        GROUP BY quantidade, quilometragem;
+        `;
+
+        var result = await mysql.execute(query, [abastecimentoData.idCaminhaoColeta, abastecimentoData.data])
+
+        if(result.length > 0) {
+            if(result[0].quilometragem > abastecimentoData.quilometragem) {
+                return res.status(409).send({message: "No ultimo abastecimento esse caminhão tinha uma quilometragem maior!"});
+            }
+            // calcular media de consumo
+            abastecimentoData['mediaConsumo'] = (abastecimentoData.quilometragem - result[0].quilometragem) / result[0].quantidade;
+        } else {
+            abastecimentoData['mediaConsumo'] = '0';
+        }
+
         abastecimentoData['id'] = id;
 
-        query = `UPDATE abastecimento
-        SET
+        query = `UPDATE abastecimento 
+        SET 
+        idCaminhaoColeta = ?,
         data = ?, 
-        quatidade = ?, 
-        valor = ?,
-        quilometragem = ?,
-        mediaConsumo = ?,
-        idCaminhaColeta = ?
+        quantidade = ?,
+        valor = ?, 
+        quilometragem = ?, 
+        mediaConsumo = ? 
         WHERE idAbastecimento = ?;
         `;
 

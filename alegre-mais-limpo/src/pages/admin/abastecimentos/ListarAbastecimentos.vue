@@ -11,7 +11,7 @@
       :columns="columns"
       row-key="id"
       :filter="filter"
-      no-data-label="Nenhum Abastecimento Encontrado"
+      no-data-label="Nenhum abastecimento Encontrado"
       no-results-label="O filtro não obteve nenhum resultado"
       :loading="loading"
       :pagination="initialPagination"
@@ -86,14 +86,13 @@
           <q-form class="q-gutter-md col-sm-6 col-xs-12">
               <q-item >
                 <q-item-section>
-                  <q-checkbox
-                    name="situacao"
-                    v-model="selectedRow.situacao"
-                    true-value="1"
-                    false-value="0"
-                    disable
+                  <q-item-label class="q-pb-xs">Data</q-item-label>
+                  <date-input
                     dense
-                    label="Disponível"
+                    outlined 
+                    v-model="selectedRow.data"
+                    lazy-rules
+                    disable
                   />
                 </q-item-section>
               </q-item>
@@ -106,20 +105,29 @@
               </q-item>
               <q-item>
                 <q-item-section>
-                  <q-item-label class="q-pb-xs">Modelo</q-item-label>
-                  <q-input dense outlined disable v-model="selectedRow.modelo" />
+                  <q-item-label class="q-pb-xs">Quantidade</q-item-label>
+                  <q-input dense outlined disable v-model="selectedRow.quantidade" />
                 </q-item-section>
               </q-item>
               <q-item>
                 <q-item-section>
-                  <q-item-label class="q-pb-xs">Ano</q-item-label>
-                  <q-input dense outlined disable v-model="selectedRow.ano" />
+                  <q-item-label class="q-pb-xs">Média de Consumo</q-item-label>
+                  <q-input dense outlined disable v-model="selectedRow.mediaConsumo" />
                 </q-item-section>
               </q-item>
               <q-item>
                 <q-item-section>
-                  <q-item-label class="q-pb-xs">Marca</q-item-label>
-                  <q-input dense outlined disable v-model="selectedRow.marca" />
+                  <q-item-label class="q-pb-xs">Valor</q-item-label>
+                  <q-input 
+                  dense 
+                  outlined
+                  disable
+                  :model-value="parseFloat(selectedRow.valor).toFixed(2)"
+                  fill-mask="0" 
+                  reverse-fill-mask
+                  mask="#.##" 
+                  prefix="R$ "
+                  />
                 </q-item-section>
               </q-item>
               <q-item>
@@ -160,22 +168,43 @@
 
 <script>
 import { ref } from 'vue'
-import Abastecimento from '../../../model/Abastecimento'
+import DateInput from '../../../components/DateInput.vue'
+import Abastecimento from 'src/model/Abastecimento'
 
 const columns = [
     {
-        name: 'caminhao',
+        name: 'placa',
         required: true,
-        label: 'Caminhão',
+        label: 'Placa',
         align: 'left',
-        field: 'caminhao',
+        field: 'placa',
     },
     {
-        name: 'abastecimento',
+        name: 'quantidade',
         required: true,
-        label: 'Abastecimento',
+        label: 'Quantidade (l)',
         align: 'left',
-        field: 'abastecimento',
+        field: 'quantidade',
+    },
+    {
+      name: 'quilometragem',
+      label: 'Quilometragem',
+      align: 'left',
+      field: 'quilometragem'
+    },
+    {
+      name: 'data',
+      label: 'Data',
+      align: 'left',
+      field: 'data',
+      format: (val) => new Date(val).toLocaleDateString(),
+      sortable: true
+    },
+    {
+      name: 'mediaConsumo',
+      label: 'Média de Consumo (Km/l)',
+      align: 'left',
+      field: 'mediaConsumo'
     },
     { 
         name: 'actions', 
@@ -195,7 +224,9 @@ const loading = ref(false);
 const filter = ref('');
 
 export default {
-
+    components: {
+      DateInput
+    },
     data() {
         return {
           rows: [],
@@ -226,7 +257,7 @@ export default {
         this.show_delete = true;
       },
       getRows() {
-          // faz um request na api para obter todos os administradores
+          // faz um request na api para obter todas as manutencoes
           loading.value = true;
           this.$api.get('abastecimento')
           .then(res => {

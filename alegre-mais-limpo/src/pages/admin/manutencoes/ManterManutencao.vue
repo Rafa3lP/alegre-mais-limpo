@@ -36,6 +36,7 @@
             filled
             v-model="manutencao.quilometragem"
             label="Quilometragem"
+            :max="maxQuilometragem"
             lazy-rules
           />
           <q-input
@@ -84,6 +85,15 @@ export default {
       caminhoes: []
     }
   },
+  computed: {
+    maxQuilometragem: function() {
+      if(!this.manutencao.idCaminhaoColeta) {
+        return 0;
+      } else {
+        return this.caminhoes.filter((val) => val.id == this.manutencao.idCaminhaoColeta)[0].quilometragem;
+      }
+    }
+  },
   methods: {
     async getCaminhoes() {
       try {
@@ -99,7 +109,7 @@ export default {
         });
       }
     },
-    async getUser() {
+    async getManutencao() {
       try {
         const response = await this.$api.get(`manutencao/${this.manutencao.id}`);
         this.manutencao = response.data;
@@ -144,15 +154,12 @@ export default {
     onReset() {
       this.manutencao = new Manutencao();
     },
-    onInput(evt) {
-      console.log((parseFloat(evt)/100).toFixed(2));
-    }
   },
   created() {
     this.manutencao.id = this.$route.params.id;
     if(this.manutencao.id) {
       this.editing = true;
-      this.getUser();
+      this.getManutencao();
     }
     this.getCaminhoes();
   }

@@ -86,9 +86,10 @@
           <q-form class="q-gutter-md col-sm-6 col-xs-12">
               <q-item >
                 <q-item-section>
+                  <q-item-label class="q-pb-xs">Data</q-item-label>
                   <date-input
+                    dense
                     outlined 
-                    label="Data"
                     v-model="selectedRow.data"
                     lazy-rules
                     disable
@@ -116,7 +117,6 @@
                   outlined
                   disable
                   :model-value="parseFloat(selectedRow.valor).toFixed(2)"
-                  @input="selectedRow.valor = event.target.value"
                   fill-mask="0" 
                   reverse-fill-mask
                   mask="#.##" 

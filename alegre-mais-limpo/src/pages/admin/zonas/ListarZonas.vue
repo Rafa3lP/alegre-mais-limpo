@@ -131,7 +131,7 @@ const columns = [
         name: 'nome',
         required: true,
         label: 'Zona',
-        align: 'left',
+        align: 'center',
         field: 'nome',
     },
     { 
