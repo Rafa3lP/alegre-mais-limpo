@@ -80,6 +80,26 @@ export default defineComponent({
               title: "Caminhões",
               icon: "local_shipping",
               to: "admin.caminhoes",
+            },
+            {
+              title: "Manutenção",
+              icon: "engineering",
+              to: "admin.manutencoes",
+            },
+            {
+              title: "Abastecimento",
+              icon: "ev_station",
+              to: "admin.abastecimentos",
+            },
+            {
+              title: "Zonas",
+              icon: "apartment",
+              to: "admin.zonas",
+            },
+            {
+              title: "Ruas",
+              icon: "maps_home_work",
+              to: "admin.ruas",
             }
           ]
           break;

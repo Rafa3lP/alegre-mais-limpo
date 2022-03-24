@@ -1,10 +1,10 @@
 <template>
   <div class="q-pa-md">
     <div v-if="!editing" class="text-h4 q-pa-md row justify-center text-primary">
-      Novo Caminhão
+      Nova Rua
     </div>
     <div v-else class="text-h4 q-pa-md row justify-center text-primary">
-      Editar Caminhão
+      Editar Rua
     </div>
     <div class="row justify-center">
       <q-card class="q-pa-md" style="width: 800px;">
@@ -15,47 +15,22 @@
         >
           <q-input
             filled
-            v-model="caminhao.placa"
-            label="Placa"
-            lazy-rules
-            mask="XXX-XXXX"
-            unmasked-value
-            :rules="[ val => val && val.length == 7 || 'Placa inválida']"
-          />
-          <q-checkbox
-            class="q-mb-md"
-            name="situacao"
-            v-model="caminhao.situacao"
-            true-value="1"
-            false-value="0"
-            label="Ativo"
-          />
-          <q-input
-            filled
-            v-model="caminhao.modelo"
-            label="Modelo"
-            lazy-rules
-          />
-          <q-input
-            filled
-            v-model="caminhao.marca"
-            label="Marca"
-            lazy-rules
-          />
-          <q-input
-            type="number"
-            min="1900" 
-            :max="new Date().getFullYear().toString()"
-            label="Ano"
-            filled
-            v-model="caminhao.ano"
+            v-model="rua.nomeRua"
+            label="Nome da Rua"
             lazy-rules
           />
           <q-input
             type="number"
             filled
-            v-model="caminhao.quilometragem"
-            label="Quilometragem"
+            v-model="rua.qtdLatasLixo"
+            label="Quantidade de Latas de Lixo"
+            lazy-rules
+          />
+          <q-input
+            type="number"
+            filled
+            v-model="rua.qtdCasas"
+            label="Quantidade de Casas"
             lazy-rules
           />
           <div class="float-right">
@@ -69,50 +44,50 @@
 </template>
 
 <script>
-import Caminhao from 'src/model/Caminhao'
+import Rua from 'src/model/Rua'
 
 export default {
   
   data() {
     return {
-      caminhao: new Caminhao(),
+      rua: new Rua(),
       editing: false,
     }
   },
   methods: {
     async getUser() {
       try {
-        const response = await this.$api.get(`caminhao/${this.caminhao.id}`);
-        this.caminhao = response.data;
+        const response = await this.$api.get(`rua/${this.rua.id}`);
+        this.rua = response.data;
       } catch(err) {
         this.$q.notify({
           type: "negative",
-          message: "Não foi possível obter o caminhão"
+          message: "Não foi possível obter a rua"
         })
         this.$router.push({
-          name: 'admin.caminhoes'
+          name: 'admin.ruas'
         });
       }
     },
     async onSubmit() {
       try {
         if(this.editing) {
-          // atualiza o caminhão existente
-          await this.$api.put(`/caminhao/${this.caminhao.id}`, this.caminhao);
+          // atualiza a rua existente
+          await this.$api.put(`/rua/${this.rua.id}`, this.rua);
           this.$q.notify({
             type: "positive",
             message: "Atualizado com sucesso!"
           });
         } else {
-          // cria novo caminhão
-          await this.$api.post('/caminhao', this.caminhao);
+          // cria nova noza
+          await this.$api.post('/rua', this.rua);
           this.$q.notify({
             type: "positive",
             message: "Cadastrado com sucesso!"
           });
         }
         this.$router.push({
-          name: 'admin.caminhoes'
+          name: 'admin.ruas'
         });
       }catch(err) {
         this.$q.notify({
@@ -123,12 +98,12 @@ export default {
 
     },
     onReset() {
-      this.caminhao = new Caminhao();
+      this.rua = new Rua();
     },
   },
   created() {
-    this.caminhao.id = this.$route.params.id;
-    if(this.caminhao.id) {
+    this.rua.id = this.$route.params.id;
+    if(this.rua.id) {
       this.editing = true;
       this.getUser();
     }

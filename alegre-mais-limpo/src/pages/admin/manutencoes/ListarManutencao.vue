@@ -1,17 +1,17 @@
 <template>
   <div class="q-pa-md">
     <div class="text-h4 q-pa-md row justify-center text-primary">
-      Caminhões
+      Manutenções
     </div>
     <q-table
       :grid="$q.screen.xs"
       dense
-      title="Caminhões"
+      title="Manutenções"
       :rows="rows"
       :columns="columns"
       row-key="id"
       :filter="filter"
-      no-data-label="Nenhum Caminhão Encontrado"
+      no-data-label="Nenhuma Manutenção Encontrado"
       no-results-label="O filtro não obteve nenhum resultado"
       :loading="loading"
       :pagination="initialPagination"
@@ -62,13 +62,13 @@
         <q-btn
             class="q-ma-md" 
             color="primary" 
-            label="Cadastrar Caminhao"
-            @click="$router.push({ name: 'admin.novo.caminhao' })"
+            label="Cadastrar Manutenção"
+            @click="$router.push({ name: 'admin.novo.manutencao' })"
         />
       </template>
     </q-table>
 
-    <!-- DIALOG DE VISUALIZAR CAMINHÕES -->
+    <!-- DIALOG DE VISUALIZAR USUARIO -->
     <q-dialog v-model="show_dialog">
       <q-card style="width: 600px; max-width: 60vw;">
         <q-card-section class="row items-center justify-between q-pb-sm no-wrap">
@@ -160,7 +160,7 @@
 
 <script>
 import { ref } from 'vue'
-import Caminhao from '../../../model/Caminhao'
+import manutencao from '../../../model/Manutencao'
 
 const columns = [
     {
@@ -200,7 +200,7 @@ export default {
     data() {
         return {
           rows: [],
-          selectedRow: new Caminhao(),
+          selectedRow: new Manutencao(),
           show_dialog: false,
           show_delete: false
         }
@@ -214,7 +214,7 @@ export default {
       editRow(props) {
         // chamar tela de edição
         this.$router.push({ 
-            name: 'admin.editar.caminhao', 
+            name: 'admin.editar.manutencao', 
             params: { 
               id: props.row.id 
             } 
@@ -229,19 +229,19 @@ export default {
       getRows() {
           // faz um request na api para obter todos os administradores
           loading.value = true;
-          this.$api.get('caminhao')
+          this.$api.get('manutencao')
           .then(res => {
-            this.rows = res.data.caminhoes;
+            this.rows = res.data.manutencoes;
           }, err => console.log(err));
           loading.value = false;
       },
       async handleDelete(row) {
-        // deleta o caminhão do banco
+        // deleta o usuario do banco
         try {
-          await this.$api.delete(`caminhao/${row.id}`);
+          await this.$api.delete(`manutencao/${row.id}`);
           this.$q.notify({
             type: "positive",
-            message: "Caminhão Excluido!"
+            message: "Manutenção Excluida!"
           })
           this.getRows();
         } catch(err) {

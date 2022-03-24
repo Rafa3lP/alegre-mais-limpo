@@ -8,7 +8,7 @@ const abastecimentoController = require('../controllers/abastecimento-controller
 router.post('/', abastecimentoController.create);
 
 // obter abastecimentos
-router.get('/', abastecimentoController.getCaminhoes);
+router.get('/', abastecimentoController.getAbastecimentos);
 
 // obter abstecimento por id
 router.get('/:id', abastecimentoController.getAbastecimentoById);

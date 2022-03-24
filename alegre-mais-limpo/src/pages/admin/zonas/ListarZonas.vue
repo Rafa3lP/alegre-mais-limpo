@@ -1,17 +1,17 @@
 <template>
   <div class="q-pa-md">
     <div class="text-h4 q-pa-md row justify-center text-primary">
-      Caminhões
+      Zonas
     </div>
     <q-table
       :grid="$q.screen.xs"
       dense
-      title="Caminhões"
+      title="Zonas"
       :rows="rows"
       :columns="columns"
       row-key="id"
       :filter="filter"
-      no-data-label="Nenhum Caminhão Encontrado"
+      no-data-label="Nenhum Zona Encontrado"
       no-results-label="O filtro não obteve nenhum resultado"
       :loading="loading"
       :pagination="initialPagination"
@@ -62,13 +62,13 @@
         <q-btn
             class="q-ma-md" 
             color="primary" 
-            label="Cadastrar Caminhao"
-            @click="$router.push({ name: 'admin.novo.caminhao' })"
+            label="Cadastrar Zona"
+            @click="$router.push({ name: 'admin.novo.zona' })"
         />
       </template>
     </q-table>
 
-    <!-- DIALOG DE VISUALIZAR CAMINHÕES -->
+    <!-- DIALOG DE VISUALIZAR USUARIO -->
     <q-dialog v-model="show_dialog">
       <q-card style="width: 600px; max-width: 60vw;">
         <q-card-section class="row items-center justify-between q-pb-sm no-wrap">
@@ -84,50 +84,14 @@
 
         <q-card-section class="scroll" style="max-height: 50vh;">
           <q-form class="q-gutter-md col-sm-6 col-xs-12">
-              <q-item >
-                <q-item-section>
-                  <q-checkbox
-                    name="situacao"
-                    v-model="selectedRow.situacao"
-                    true-value="1"
-                    false-value="0"
-                    disable
-                    dense
-                    label="Disponível"
-                  />
-                </q-item-section>
-              </q-item>
-              
+
               <q-item>
                 <q-item-section>
-                  <q-item-label class="q-pb-xs">Placa</q-item-label>
-                  <q-input dense outlined disable v-model="selectedRow.placa" mask = "XXX-XXXX" />
+                  <q-item-label class="q-pb-xs">Zona</q-item-label>
+                  <q-input dense outlined disable v-model="selectedRow.nomeZona" />
                 </q-item-section>
               </q-item>
-              <q-item>
-                <q-item-section>
-                  <q-item-label class="q-pb-xs">Modelo</q-item-label>
-                  <q-input dense outlined disable v-model="selectedRow.modelo" />
-                </q-item-section>
-              </q-item>
-              <q-item>
-                <q-item-section>
-                  <q-item-label class="q-pb-xs">Ano</q-item-label>
-                  <q-input dense outlined disable v-model="selectedRow.ano" />
-                </q-item-section>
-              </q-item>
-              <q-item>
-                <q-item-section>
-                  <q-item-label class="q-pb-xs">Marca</q-item-label>
-                  <q-input dense outlined disable v-model="selectedRow.marca" />
-                </q-item-section>
-              </q-item>
-              <q-item>
-                <q-item-section>
-                  <q-item-label class="q-pb-xs">Quilometragem</q-item-label>
-                  <q-input dense outlined disable v-model="selectedRow.quilometragem" />
-                </q-item-section>
-              </q-item>
+
           </q-form>
         </q-card-section>
           <q-card-actions align="right" class="q-ma-sm">
@@ -160,23 +124,15 @@
 
 <script>
 import { ref } from 'vue'
-import Caminhao from '../../../model/Caminhao'
+import Zona from '../../../model/Zona'
 
 const columns = [
     {
-        name: 'placa',
+        name: 'zona',
         required: true,
-        label: 'Placa',
+        label: 'Zona',
         align: 'left',
-        field: 'placa',
-    },
-    {
-        name: 'situacao',
-        required: true,
-        label: 'Situação',
-        align: 'left',
-        field: 'situacao',
-        format: (val, row) => val == '1' ? 'Disponível' : 'Indisponível'
+        field: 'zona',
     },
     { 
         name: 'actions', 
@@ -200,7 +156,7 @@ export default {
     data() {
         return {
           rows: [],
-          selectedRow: new Caminhao(),
+          selectedRow: new Zona(),
           show_dialog: false,
           show_delete: false
         }
@@ -214,7 +170,7 @@ export default {
       editRow(props) {
         // chamar tela de edição
         this.$router.push({ 
-            name: 'admin.editar.caminhao', 
+            name: 'admin.editar.zona', 
             params: { 
               id: props.row.id 
             } 
@@ -229,19 +185,19 @@ export default {
       getRows() {
           // faz um request na api para obter todos os administradores
           loading.value = true;
-          this.$api.get('caminhao')
+          this.$api.get('zona')
           .then(res => {
-            this.rows = res.data.caminhoes;
+            this.rows = res.data.zonas;
           }, err => console.log(err));
           loading.value = false;
       },
       async handleDelete(row) {
-        // deleta o caminhão do banco
+        // deleta o usuario do banco
         try {
-          await this.$api.delete(`caminhao/${row.id}`);
+          await this.$api.delete(`zona/${row.id}`);
           this.$q.notify({
             type: "positive",
-            message: "Caminhão Excluido!"
+            message: "Zona Excluida!"
           })
           this.getRows();
         } catch(err) {
