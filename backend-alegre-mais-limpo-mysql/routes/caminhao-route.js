@@ -7,7 +7,7 @@ const caminhaoController = require('../controllers/caminhao-controller.js');
 // criar caminhao
 router.post('/', caminhaoController.create);
 
-// obter  
+// obter caminhoes
 router.get('/', caminhaoController.getCaminhoes);
 
 // obter caminhoes por id
