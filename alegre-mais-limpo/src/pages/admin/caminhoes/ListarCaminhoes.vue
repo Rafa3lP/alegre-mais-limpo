@@ -16,41 +16,55 @@
       :loading="loading"
       :pagination="initialPagination"
     >
-    <!-- BOTOES DE AÇÃO -->
-    <template v-slot:body-cell-actions="props">
-        <q-td :props="props">
-            <q-btn 
-            class="q-mr-md" 
-            dense 
-            round 
-            flat 
-            color="grey" 
-            @click="viewRow(props)" 
-            icon="visibility"
-            >
-            </q-btn>
-            <q-btn 
-            class="q-mr-md" 
-            dense 
-            round 
-            flat 
-            color="grey" 
-            @click="editRow(props)" 
-            icon="edit"
-            >
-            </q-btn>
-            <q-btn 
-            dense 
-            round 
-            flat 
-            color="negative" 
-            @click="deleteRow(props)"
-            icon="delete"
-            >
-            </q-btn>
-        </q-td>     
-    </template>
 
+    <!-- BADGES E BOTOES DE AÇÃO -->
+    <template v-slot:body="props">
+      <q-tr :props="props">
+        <q-td key="placa" :props="props">
+            {{ props.row.placa }}
+        </q-td>
+        <q-td key="situacao" :props="props">
+          <q-badge v-if="props.row.situacao == '1'" color="green">
+            Disponível
+          </q-badge>
+          <q-badge v-else color="red">
+            Indisponível
+          </q-badge>
+        </q-td>
+        <q-td key="actions" :props="props">
+          <q-btn 
+          class="q-mr-md" 
+          dense 
+          round 
+          flat 
+          color="grey" 
+          @click="viewRow(props)" 
+          icon="visibility"
+          >
+          </q-btn>
+          <q-btn 
+          class="q-mr-md" 
+          dense 
+          round 
+          flat 
+          color="grey" 
+          @click="editRow(props)" 
+          icon="edit"
+          >
+          </q-btn>
+          <q-btn 
+          dense 
+          round 
+          flat 
+          color="negative" 
+          @click="deleteRow(props)"
+          icon="delete"
+          >
+          </q-btn>
+        </q-td>   
+      </q-tr>
+    </template>
+    
     <!-- BARRA DE PESQUISA E BOTÃO DE CADASTRAR -->
     <template v-slot:top>
         <q-input outlined dense debounce="200" color="primary" v-model="filter" placeholder="Pesquisar">
@@ -172,11 +186,9 @@ const columns = [
     },
     {
         name: 'situacao',
-        required: true,
         label: 'Situação',
-        align: 'left',
+        align: 'center',
         field: 'situacao',
-        format: (val, row) => val == '1' ? 'Disponível' : 'Indisponível'
     },
     { 
         name: 'actions', 

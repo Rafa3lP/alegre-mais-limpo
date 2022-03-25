@@ -46,12 +46,12 @@ exports.create = async (req, res, next) => {
 exports.getRuas = async (req, res, next) => {
     try {
 
-        const query = `SELECT r.idRua id, r.nome, r.complemento, r.qtdLatasLixo, r.qtdCasa z.nome 
-        FROM rua r INNER JOIN zona z ON r.idZona = z.idZona;`;
+        const query = `SELECT r.idRua id, r.nome, r.complemento, r.qtdLatasLixo, r.qtdCasas, z.nome zona 
+        FROM rua r LEFT JOIN zona z ON r.idZona = z.idZona;`;
 
         const result = await mysql.execute(query, []);
 
-        const response = { rua: Object.keys(result).map((key) => result[key]) };
+        const response = { ruas: Object.keys(result).map((key) => result[key]) };
         return res.status(200).send(response);
     } catch (error) {
         console.log(error);
@@ -63,8 +63,8 @@ exports.getRuaById = async (req, res, next) => {
     try {
         const { id } = req.params;
 
-        const query = `SELECT r.idRua id, r.nome, r.complemento, r.qtdLatasLixo, r.qtdCasa z.nome 
-        FROM rua r INNER JOIN zona z ON r.idZona = z.idZona
+        const query = `SELECT r.idRua id, r.nome, r.complemento, r.qtdLatasLixo, r.qtdCasas, z.nome zona
+        FROM rua r LEFT JOIN zona z ON r.idZona = z.idZona
         WHERE r.idRua = ?;`;
 
         const result = await mysql.execute(query, [id]);
@@ -100,19 +100,21 @@ exports.update = async (req, res, next) => {
 
         //Objeto ruaDate sem o id
         const ruaData = Object.assign({}, {
-            nome: req.body.nomeRua,
+            nome: req.body.nome,
             complemento: req.body.complemento,
             qtdLatasLixo: req.body.qtdLatasLixo,
             qtdCasas: req.body.qtdCasas
         });
 
+        console.log(ruaData);
+
         //Objeto zonaData sem id
         const zonaData = Object.assign({}, {
-            nome: req.body.nomeZona
+            nome: req.body.zona
         });
 
         //query para selecionar o id da zona(nome da zona) que foi passado
-        const query = `SELECT idZona FROM zona WHERE nome = ?;`;
+        let query = `SELECT idZona FROM zona WHERE nome = ?;`;
 
         //executando a query
         const result = await mysql.execute(query, Object.values(zonaData));
@@ -123,20 +125,20 @@ exports.update = async (req, res, next) => {
             return res.status(409).send({message: "Não existe uma zona com esse nome"});
         }
 
-        //atribuindo o idZona que vei do banco de dados para a constante idZona
-        const {idZona} = result[0];
-
+        //atribuindo o idZona que veio do banco de dados para a constante idZona
+        const { idZona } = result[0];
+        console.log(idZona);
         //adicionando o idZona e o id no objeto ruaData
         ruaData['idZona'] = idZona;
         ruaData['id'] = id;
 
-        query = `UPDATE rua r
+        query = `UPDATE rua 
         SET
         nome = ?, 
         complemento = ?, 
         qtdLatasLixo = ?,
         qtdCasas = ?,
-        idZona = ?
+        idZona = ? 
         WHERE idRua = ?;
         `;
 

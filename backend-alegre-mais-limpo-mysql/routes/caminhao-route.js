@@ -5,18 +5,18 @@ const login = require('../middleware/login');
 const caminhaoController = require('../controllers/caminhao-controller.js');
 
 // criar caminhao
-router.post('/', caminhaoController.create);
+router.post('/', login.required, caminhaoController.create);
 
 // obter caminhoes
-router.get('/', caminhaoController.getCaminhoes);
+router.get('/', login.optional, caminhaoController.getCaminhoes);
 
 // obter caminhoes por id
-router.get('/:id', caminhaoController.getCaminhaoById);
+router.get('/:id', login.required, caminhaoController.getCaminhaoById);
 
 // deletar caminhao
-router.delete('/:id', caminhaoController.delete);
+router.delete('/:id', login.required, caminhaoController.delete);
 
 // atualizar admin
-router.put('/:id', caminhaoController.update);
+router.put('/:id', login.required, caminhaoController.update);
 
 module.exports = router;

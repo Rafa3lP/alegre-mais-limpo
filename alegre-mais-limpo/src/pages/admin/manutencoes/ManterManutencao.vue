@@ -13,30 +13,30 @@
           @submit.prevent="onSubmit"
           @reset="onReset"
         >
-        <!--verificar se funciona-->
-            <q-date v-model="date" />
-            <q-date
-                v-model="manutencao.data"
-                minimal
-                filled
-                label="Data da manutenção"
-                lazy-rules
-            />
-          <!--verificar se funciona-->
-          <!--<q-input
-              type="number"
-              min="1900" 
-              :max="new Date().toString()"
-              label="Data da manutenção"
-              filled
-              v-model="manutencao.data"
-              lazy-rules
-          />-->
+          <date-input
+            filled 
+            label="Data"
+            v-model="manutencao.data"
+            lazy-rules
+            :disable="editing"
+          />
+          <q-select
+            filled 
+            v-model="manutencao.idCaminhaoColeta"
+            emit-value
+            map-options
+            :options="caminhoes"
+            option-value="id"
+            option-label="placa"
+            label="Caminhao"
+            behavior="menu"
+          />
           <q-input
             type="number"
             filled
             v-model="manutencao.quilometragem"
             label="Quilometragem"
+            :max="maxQuilometragem"
             lazy-rules
           />
           <q-input
@@ -46,13 +46,20 @@
             lazy-rules
           />
           <q-input
-            type="float"
             filled
-            v-model="manutencao.valor"
+            :model-value="parseFloat(manutencao.valor).toFixed(2)"
+            @update:modelValue="
+            (val) => {
+              val ? manutencao.valor = (parseFloat(val)/100).toFixed(2) : manutencao.valor = '0'
+            }"
+            fill-mask="0"
+            unmasked-value
+            reverse-fill-mask
+            mask="#.##" 
+            prefix="R$ "
             label="Valor"
             lazy-rules
           />
-
           <div class="float-right">
             <q-btn v-if="!editing" label="Limpar" type="reset" color="primary" flat class="q-ml-sm" />
             <q-btn :label="editing ? 'Salvar' : 'Cadastrar'" type="submit" color="primary"/>
@@ -64,18 +71,45 @@
 </template>
 
 <script>
+import DateInput from '../../../components/DateInput.vue'
 import Manutencao from 'src/model/Manutencao'
 
 export default {
-  
+  components: {
+    DateInput
+  },
   data() {
     return {
       manutencao: new Manutencao(),
       editing: false,
+      caminhoes: []
+    }
+  },
+  computed: {
+    maxQuilometragem: function() {
+      if(!this.manutencao.idCaminhaoColeta) {
+        return 0;
+      } else {
+        return this.caminhoes.filter((val) => val.id == this.manutencao.idCaminhaoColeta)[0].quilometragem;
+      }
     }
   },
   methods: {
-    async getUser() {
+    async getCaminhoes() {
+      try {
+        const response = await this.$api.get(`caminhao`);
+        this.caminhoes = response.data.caminhoes;
+      } catch(err) {
+        this.$q.notify({
+          type: "negative",
+          message: "Não foi possível obter os Caminhões"
+        })
+        this.$router.push({
+          name: 'admin.manutencoes'
+        });
+      }
+    },
+    async getManutencao() {
       try {
         const response = await this.$api.get(`manutencao/${this.manutencao.id}`);
         this.manutencao = response.data;
@@ -125,8 +159,9 @@ export default {
     this.manutencao.id = this.$route.params.id;
     if(this.manutencao.id) {
       this.editing = true;
-      this.getUser();
+      this.getManutencao();
     }
+    this.getCaminhoes();
   }
 }
 </script>

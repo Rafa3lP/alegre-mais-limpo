@@ -4,10 +4,13 @@ const login = require('../middleware/login');
 
 const userController = require('../controllers/user-controller.js');
 
-//router.post('/', login.required, userController.create);
-router.post('/', userController.create);
+// criar usuario
+router.post('/', login.required, userController.create);
+
+// logar
 router.post('/login', userController.login);
+
 //obter usuario pelo id ou token
-router.get('/', login.required, userController.getUser);
+router.get('/', userController.getUser);
 
 module.exports = router;

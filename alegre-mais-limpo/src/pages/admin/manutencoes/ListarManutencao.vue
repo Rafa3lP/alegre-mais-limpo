@@ -63,7 +63,7 @@
             class="q-ma-md" 
             color="primary" 
             label="Cadastrar Manutenção"
-            @click="$router.push({ name: 'admin.novo.manutencao' })"
+            @click="$router.push({ name: 'admin.nova.manutencao' })"
         />
       </template>
     </q-table>
@@ -86,14 +86,13 @@
           <q-form class="q-gutter-md col-sm-6 col-xs-12">
               <q-item >
                 <q-item-section>
-                  <q-checkbox
-                    name="situacao"
-                    v-model="selectedRow.situacao"
-                    true-value="1"
-                    false-value="0"
-                    disable
+                  <q-item-label class="q-pb-xs">Data</q-item-label>
+                  <date-input
                     dense
-                    label="Disponível"
+                    outlined 
+                    v-model="selectedRow.data"
+                    lazy-rules
+                    disable
                   />
                 </q-item-section>
               </q-item>
@@ -106,20 +105,23 @@
               </q-item>
               <q-item>
                 <q-item-section>
-                  <q-item-label class="q-pb-xs">Modelo</q-item-label>
-                  <q-input dense outlined disable v-model="selectedRow.modelo" />
+                  <q-item-label class="q-pb-xs">Descrição</q-item-label>
+                  <q-input dense outlined disable v-model="selectedRow.descricao" />
                 </q-item-section>
               </q-item>
               <q-item>
                 <q-item-section>
-                  <q-item-label class="q-pb-xs">Ano</q-item-label>
-                  <q-input dense outlined disable v-model="selectedRow.ano" />
-                </q-item-section>
-              </q-item>
-              <q-item>
-                <q-item-section>
-                  <q-item-label class="q-pb-xs">Marca</q-item-label>
-                  <q-input dense outlined disable v-model="selectedRow.marca" />
+                  <q-item-label class="q-pb-xs">Valor</q-item-label>
+                  <q-input 
+                  dense 
+                  outlined
+                  disable
+                  :model-value="parseFloat(selectedRow.valor).toFixed(2)"
+                  fill-mask="0" 
+                  reverse-fill-mask
+                  mask="#.##" 
+                  prefix="R$ "
+                  />
                 </q-item-section>
               </q-item>
               <q-item>
@@ -160,7 +162,8 @@
 
 <script>
 import { ref } from 'vue'
-import manutencao from '../../../model/Manutencao'
+import Manutencao from '../../../model/Manutencao'
+import DateInput from '../../../components/DateInput.vue'
 
 const columns = [
     {
@@ -171,12 +174,18 @@ const columns = [
         field: 'placa',
     },
     {
-        name: 'situacao',
-        required: true,
-        label: 'Situação',
-        align: 'left',
-        field: 'situacao',
-        format: (val, row) => val == '1' ? 'Disponível' : 'Indisponível'
+      name: 'quilometragem',
+      label: 'Quilometragem',
+      align: 'left',
+      field: 'quilometragem'
+    },
+    {
+      name: 'data',
+      label: 'Data',
+      align: 'left',
+      field: 'data',
+      format: (val) => new Date(val).toLocaleDateString(),
+      sortable: true
     },
     { 
         name: 'actions', 
@@ -196,7 +205,9 @@ const loading = ref(false);
 const filter = ref('');
 
 export default {
-
+    components: {
+      DateInput
+    },
     data() {
         return {
           rows: [],
@@ -227,7 +238,7 @@ export default {
         this.show_delete = true;
       },
       getRows() {
-          // faz um request na api para obter todos os administradores
+          // faz um request na api para obter todas as manutencoes
           loading.value = true;
           this.$api.get('manutencao')
           .then(res => {

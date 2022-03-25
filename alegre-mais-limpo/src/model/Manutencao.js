@@ -1,18 +1,19 @@
 export default class Manutencao{
     constructor(
         id = '',
+        idCaminhaoColeta = '',
         placa = '',
-        //verificar se funciona
-        data =  new Date().toISOString,
+        data =  new Date().toISOString(),
         quilometragem = '',
         descricao = '',
-        valor = ''
+        valor = '0'
     ){
-        this.id = id,
-        this.placa = placa,
-        this.data =  data,
-        this.quilometragem = quilometragem,
-        this.descricao = descricao,
-        this.valor = valor
+        this.id = id;
+        this.idCaminhaoColeta = idCaminhaoColeta;
+        this.placa = placa;
+        this.data =  data;
+        this.quilometragem = quilometragem;
+        this.descricao = descricao;
+        this.valor = valor;
     }
 }

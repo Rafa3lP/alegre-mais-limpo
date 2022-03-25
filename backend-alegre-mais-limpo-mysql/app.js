@@ -4,7 +4,6 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 
 const userRoute = require('./routes/user-route');
-const zonaRoute = require('./routes/zona-route');
 const adminRoute = require('./routes/admin-route');
 const auxiliarRoute = require('./routes/auxiliar-route');
 const motoristaRoute = require('./routes/motorista-route');
@@ -13,11 +12,6 @@ const manutencaoRoute = require('./routes/manutencao-route');
 const abastecimentoRoute = require('./routes/abastecimento-route');
 const zonaRoute = require('./routes/zona-route');
 const ruaRoute = require('./routes/rua-route');
-
-/*const categoryRoute = require('./routes/category-route');
-const orderRoute = require('./routes/order-route');
-const userRoute = require('./routes/user-route');
-const imageRoute  = require('./routes/image-route');*/
 
 app.use(morgan('dev'));
 //app.use('/uploads', express.static('uploads'));
@@ -39,7 +33,6 @@ app.use((req, res, next) => {
 });
 
 app.use('/usuario', userRoute);
-app.use('/zona', zonaRoute);
 app.use('/admin', adminRoute);
 app.use('/auxiliar', auxiliarRoute);
 app.use('/motorista', motoristaRoute);

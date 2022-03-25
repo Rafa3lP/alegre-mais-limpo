@@ -5,18 +5,18 @@ const login = require('../middleware/login');
 const auxiliarController = require('../controllers/auxiliar-controller.js');
 
 // criar auxiliar
-router.post('/', auxiliarController.create);
+router.post('/', login.required, auxiliarController.create);
 
 // obter auxiliares
-router.get('/', auxiliarController.getAuxiliares);
+router.get('/', login.required, auxiliarController.getAuxiliares);
 
 // obter auxiliar por id
-router.get('/:id', auxiliarController.getAuxiliarById);
+router.get('/:id', login.required, auxiliarController.getAuxiliarById);
 
 // deletar auxiliar
-router.delete('/:id', auxiliarController.delete);
+router.delete('/:id', login.required, auxiliarController.delete);
 
 // atualizar auxiliar
-router.put('/:id', auxiliarController.update);
+router.put('/:id', login.required, auxiliarController.update);
 
 module.exports = router;

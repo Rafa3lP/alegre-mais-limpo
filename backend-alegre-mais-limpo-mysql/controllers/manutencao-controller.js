@@ -2,24 +2,17 @@ const mysql = require('../mysql');
 
 exports.create = async (req, res, next) => {
     try {
-        //verificando se o manutenção está cadastrado
-        var query = 'SELECT idManutencaoColeta  FROM manutencaoColeta WHERE placa = ?';
-        var result = await mysql.execute(query, [req.body.placa]);
-
-        if (result.length == 0) {
-            return res.status(409).send({ message: "Manutenção não cadastrada" });
-        }
-
+        
         const ManutencaoData = Object.assign({}, {
-            idManutencaoColeta: result.idManutencaoColeta,
-            data: req.body.data,
+            idCaminhaoColeta: req.body.idCaminhaoColeta,
+            data: new Date(`${req.body.data}`).toLocaleDateString('en-CA'),
             quilometragem: req.body.quilometragem,
             descricao: req.body.descricao,
             valor: req.body.valor,
         });
 
         query = `INSERT INTO manutencao
-        (idManutencaoColeta, data, quilometragem, descricao, valor)
+        (idCaminhaoColeta, data, quilometragem, descricao, valor)
         VALUES (?, ?, ?, ?, ?)`;
 
         const response = await mysql.execute(query, Object.values(ManutencaoData));
@@ -30,17 +23,17 @@ exports.create = async (req, res, next) => {
     }
 }
 
-exports.getCaminhoes = async (req, res, next) => {
+exports.getManutencoes = async (req, res, next) => {
     try {
 
-        const query = `SELECT m.idManutencao, id, c.placa, m.data, m.quilometragem,
+        const query = `SELECT m.idManutencao id, m.idCaminhaoColeta, c.placa, m.data, m.quilometragem,
         m.descricao, m.valor
-        FROM manutencao m INNER JOIN caminhoColeta c 
-        ON m.idCaminhoColeta = c.idCaminhoColeta;`;
+        FROM manutencao m INNER JOIN caminhaoColeta c 
+        ON m.idCaminhaoColeta = c.idCaminhaoColeta;`;
 
         const result = await mysql.execute(query, []);
 
-        const response = { rua: Object.keys(result).map((key) => result[key]) };
+        const response = { manutencoes: Object.keys(result).map((key) => result[key]) };
         return res.status(200).send(response);
     } catch (error) {
         console.log(error);
@@ -48,19 +41,20 @@ exports.getCaminhoes = async (req, res, next) => {
     }
 };
 
-exports.getAbastecimentoById = async (req, res, next) => {
+exports.getManutencaoById = async (req, res, next) => {
     try {
         const { id } = req.params;
 
-        const query = `SELECT m.idManutencao, id, c.placa, m.data, m.quilometragem,
+        const query = `SELECT m.idManutencao id, m.idCaminhaoColeta, c.placa, m.data, m.quilometragem,
         m.descricao, m.valor
-        FROM manutencao m INNER JOIN caminhoColeta c 
-        ON m.idCaminhoColeta = c.idCaminhoColeta
+        FROM manutencao m INNER JOIN caminhaoColeta c 
+        ON m.idCaminhaoColeta = c.idCaminhaoColeta 
         WHERE m.idManutencao = ?;`;
-
-        const result = await mysql.execute(query, [id]);
+        
+        const result = await mysql.execute(query, [ id ]);
 
         return res.status(200).send(result[0]);
+
     } catch (error) {
         console.log(error.status);
         return res.status(500).send({ error: error });
@@ -73,7 +67,7 @@ exports.delete = async (req, res, next) => {
 
         query = `
         DELETE FROM manutencao
-        WHERE id = ?`;
+        WHERE idManutencao = ?`;
 
         await mysql.execute(query, [id]);
 
@@ -89,46 +83,42 @@ exports.update = async (req, res, next) => {
     try {
         const { id } = req.params;
 
-        //Objeto manutencaoData sem o id
         const manutencaoData = Object.assign({}, {
-            data: req.body.data,
+            idCaminhaoColeta: req.body.idCaminhaoColeta,
+            data: new Date(`${req.body.data}`).toLocaleDateString('en-CA'),
             quilometragem: req.body.quilometragem,
             descricao: req.body.descricao,
-            valor: req.body.valor
+            valor: req.body.valor,
         });
 
-        //Objeto caminhaoColetaData sem id
-        const caminhaoColetaData = Object.assign({}, {
-            placa: req.body.placa
-        });
+        //verificar se existe a manutencao
+        var query = `SELECT idManutencao FROM manutencao WHERE idManutencao = ?;`;
+        
+        var result = await mysql.execute(query, [ id ]);
 
-        //query para selecionar o id da zona(nome da zona) que foi passado
-        const query = `SELECT idCaminhaoColeta FROM caminhoColeta WHERE placa = ?;`;
-
-        //executando a query
-        const result = await mysql.execute(query, Object.values(caminhaoColetaData));
-
-        //verificando se retornou alguma zona
-        //se não retornou uma zona a zona inserida não está cadastrada
         if(result.length == 0){
-            return res.status(409).send({message: "Não existe uma caminha com essa placa"});
+            return res.status(409).send({message: "Não existe nenhuma manutenção com esse id!"});
         }
 
-        //atribuindo o idCaminhaoColeta que vei do banco de dados para a constante idCaminhaoColeta
-        const {idCaminhoColeta} = result[0];
+        // verificar se o caminhão existe
+        query = `SELECT idCaminhaoColeta FROM caminhaoColeta WHERE idCaminhaoColeta = ?;`;
 
-        //adicionando o idCaminhaoColeta e o id no objeto abastecimentoDate
-        manutencaoData['idCaminhoColeta'] = idCaminhoColeta;
+        result = await mysql.execute(query, [ manutencaoData.idCaminhaoColeta ]);
+
+        if(result.length == 0){
+            return res.status(409).send({message: "Caminhão inválido!"});
+        }
+
         manutencaoData['id'] = id;
 
-        query = `UPDATE manutencao
-        SET
+        query = `UPDATE manutencao 
+        SET 
+        idCaminhaoColeta = ?,
         data = ?, 
         quilometragem = ?, 
         descricao = ?,
-        valor = ?,
-        idCaminhaColeta = ?
-        WHERE idManuntencao = ?;
+        valor = ? 
+        WHERE idManutencao = ?;
         `;
 
         await mysql.execute(query, Object.values(manutencaoData));

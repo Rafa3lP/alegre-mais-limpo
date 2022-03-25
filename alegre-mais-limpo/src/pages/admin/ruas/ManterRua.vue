@@ -15,8 +15,14 @@
         >
           <q-input
             filled
-            v-model="rua.nomeRua"
+            v-model="rua.nome"
             label="Nome da Rua"
+            lazy-rules
+          />
+          <q-input
+            filled
+            v-model="rua.complemento"
+            label="Complemento"
             lazy-rules
           />
           <q-input
@@ -32,6 +38,17 @@
             v-model="rua.qtdCasas"
             label="Quantidade de Casas"
             lazy-rules
+          />
+          <q-select
+            filled 
+            v-model="rua.zona"
+            emit-value
+            map-options
+            :options="zonas"
+            option-value="nome"
+            option-label="nome"
+            label="Zona"
+            behavior="menu"
           />
           <div class="float-right">
             <q-btn v-if="!editing" label="Limpar" type="reset" color="primary" flat class="q-ml-sm" />
@@ -52,10 +69,22 @@ export default {
     return {
       rua: new Rua(),
       editing: false,
+      zonas: [],
     }
   },
   methods: {
-    async getUser() {
+    async getZonas() {
+      try {
+        const response = await this.$api.get('zona');
+        this.zonas = response.data.zonas;
+      } catch(err) {
+        this.$q.notify({
+          type: "negative",
+          message: "Não foi possível obter as zonas"
+        })
+      }
+    },
+    async getRua() {
       try {
         const response = await this.$api.get(`rua/${this.rua.id}`);
         this.rua = response.data;
@@ -105,8 +134,9 @@ export default {
     this.rua.id = this.$route.params.id;
     if(this.rua.id) {
       this.editing = true;
-      this.getUser();
+      this.getRua();
     }
+    this.getZonas();
   }
 }
 </script>

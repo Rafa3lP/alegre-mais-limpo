@@ -1,17 +1,17 @@
 export default class Rua {
     constructor(
         id = '',
-        nomeRua = '',
+        nome = '',
         complemento ='',
         qtdLatasLixo = '',
         qtdCasas = '',
-        nomeZona = ''
+        zona = ''
     ){
         this.id = id;
-        this.nomeRua = nomeRua;
+        this.nome = nome;
         this.complemento = complemento;
         this.qtdLatasLixo = qtdLatasLixo;
         this.qtdCasas = qtdCasas;
-        this.nomeZona = nomeZona;
+        this.zona = zona;
     }
 }

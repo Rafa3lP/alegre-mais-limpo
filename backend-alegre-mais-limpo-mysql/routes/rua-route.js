@@ -5,18 +5,18 @@ const login = require('../middleware/login');
 const ruaController = require('../controllers/rua-controller.js');
 
 //cria um rua
-router.post('/', ruaController.create);
+router.post('/', login.required, ruaController.create);
 
 //obter todas as ruas
-router.get('/', ruaController.getRuas);
+router.get('/', login.optional, ruaController.getRuas);
 
 //obter rua por id
-router.get('/:id', ruaController.getRuaById);
+router.get('/:id', login.required, ruaController.getRuaById);
 
 //deletar uma rua
-router.delete('/:id', ruaController.delete);
+router.delete('/:id', login.required, ruaController.delete);
 
 //atualizar um rua
-router.put('/:id', ruaController.update);
+router.put('/:id', login.required, ruaController.update);
 
 module.exports = router;
