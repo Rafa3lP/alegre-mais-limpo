@@ -88,7 +88,7 @@ export default {
             let routeName = '';
             switch(this.getNivelDeAcesso()) {
                 case 1:
-                    routeName = 'admin';
+                    routeName = 'admin.index';
                     break;
                 case 2:
                     routeName = 'auxiliar';
