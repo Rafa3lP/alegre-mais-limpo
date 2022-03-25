@@ -63,7 +63,7 @@
             class="q-ma-md" 
             color="primary" 
             label="Cadastrar Zona"
-            @click="$router.push({ name: 'admin.novo.zona' })"
+            @click="$router.push({ name: 'admin.nova.zona' })"
         />
       </template>
     </q-table>

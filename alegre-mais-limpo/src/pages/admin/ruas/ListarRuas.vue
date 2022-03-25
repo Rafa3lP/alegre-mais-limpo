@@ -63,7 +63,7 @@
             class="q-ma-md" 
             color="primary" 
             label="Cadastrar Rua"
-            @click="$router.push({ name: 'admin.novo.rua' })"
+            @click="$router.push({ name: 'admin.nova.rua' })"
         />
       </template>
     </q-table>

@@ -23,6 +23,7 @@
           <q-select
             filled 
             v-model="manutencao.idCaminhaoColeta"
+            @update:model-value="onSelectCaminhao"
             emit-value
             map-options
             :options="caminhoes"
@@ -154,6 +155,9 @@ export default {
     onReset() {
       this.manutencao = new Manutencao();
     },
+    onSelectCaminhao(props) {
+      this.manutencao.quilometragem = this.maxQuilometragem;
+    }
   },
   created() {
     this.manutencao.id = this.$route.params.id;

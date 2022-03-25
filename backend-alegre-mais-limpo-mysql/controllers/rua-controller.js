@@ -12,7 +12,7 @@ exports.create = async (req, res, next) => {
     try {
         //verificando se a rua já está cadastrada
         var query = "SELECT * FROM rua WHERE nome = ?";
-        var result = await mysql.execute(query, [req.body.nomeRua]);
+        var result = await mysql.execute(query, [req.body.nome]);
 
         if (result.length > 0) {
             return res.status(409).send({ message: "Rua já cadastrada" });
@@ -20,26 +20,26 @@ exports.create = async (req, res, next) => {
 
         //verificando se a zona está cadastrada
         var query = "SELECT idZona FROM zona WHERE nome = ?";
-        var result = await mysql.execute(query, [req.body.nomeZona]);
+        var result = await mysql.execute(query, [req.body.zona]);
 
         if (result.length == 0) {
             return res.status(409).send({ message: "Zona não cadastrada" });
         }
 
         const ruaData = Object.assign({}, {
-            nomeRua: req.body.nomeRua,
+            nomeRua: req.body.nome,
             complemento: req.body.complemento,
             qtdLatasLixo: req.body.qtdLatasLixo,
             qtdCasas: req.body.qtdCasas,
-            idZona: result.idZona
+            idZona: result[0].idZona
         });
 
-        query = "INSERT INTO rua(nomeRua, complemento, qtdLatasLixo, qtdCasas, idZona) VALUES (?, ?, ?, ?, ?)";
+        query = "INSERT INTO rua(nome, complemento, qtdLatasLixo, qtdCasas, idZona) VALUES (?, ?, ?, ?, ?)";
         const response = await mysql.execute(query, Object.values(ruaData));
 
         return res.status(201).send(response);
     } catch (erro) {
-        return res.status(500).send({ error: error });
+        return res.status(500).send({ error: erro });
     }
 }
 

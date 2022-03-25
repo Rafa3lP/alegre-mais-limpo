@@ -25,6 +25,7 @@
             v-model="abastecimento.idCaminhaoColeta"
             emit-value
             map-options
+            @update:model-value="onSelectCaminhao"
             :options="caminhoes"
             option-value="id"
             option-label="placa"
@@ -163,6 +164,9 @@ export default {
     onReset() {
       this.abastecimento = new Manutencao();
     },
+    onSelectCaminhao(props) {
+      this.abastecimento.quilometragem = this.maxQuilometragem;
+    }
   },
   created() {
     this.abastecimento.id = this.$route.params.id;

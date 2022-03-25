@@ -16,6 +16,12 @@ exports.create = async (req, res, next) => {
             return res.status(409).send({message: "Esse CPF já está cadastrado"});
         }
 
+        query = "SELECT * FROM motorista WHERE numCarteira = ?";
+        result = await mysql.execute(query, [ req.body.numCarteira ]);
+        if(result.length > 0) {
+            return res.status(409).send({message: "Esse numero de carteira já está cadastrado"});
+        }
+
         const hash = bcrypt.hashSync(req.body.senha, 10);
 
         const cidadeData = Object.assign({}, { 
@@ -241,6 +247,12 @@ exports.update = async (req, res, next) => {
         result = await mysql.execute(query, [ userData.cpf, id ]);
         if(result.length > 0) {
             return res.status(409).send({message: "Esse CPF já está cadastrado"});
+        }
+
+        query = "SELECT * FROM motorista WHERE numCarteira = ? AND idMotorista != ?";
+        result = await mysql.execute(query, [ motoristaData.numCarteira, id ]);
+        if(result.length > 0) {
+            return res.status(409).send({message: "Esse numero de carteira já está cadastrado"});
         }
 
         query = `
