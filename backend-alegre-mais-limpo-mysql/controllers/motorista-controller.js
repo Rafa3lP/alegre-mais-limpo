@@ -1,24 +1,6 @@
 const mysql = require('../mysql');
 const bcrypt = require('bcrypt');
 
-/*
-{
-    "nome": "joao da silva",
-    "dataNascimento": "2000-12-25",
-    "cpf": "00000000000",
-    "usuario": "joao.silva",
-    "senha": "1234",
-    "numCarteira": "00952904375"
-    "bairro": "bairro top",
-    "logradouro": "rua top",
-    "cep": "29360000",
-    "numero": "21",
-    "complemento": "Complemento teste",
-    "cidade": "Castelo",
-    "uf": "ES"
-}
-*/ 
-
 exports.create = async (req, res, next) => {
     try {
         var query = "SELECT * FROM usuario WHERE usuario = ?";

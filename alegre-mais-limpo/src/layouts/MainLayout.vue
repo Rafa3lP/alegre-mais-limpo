@@ -19,7 +19,7 @@
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
       <q-list>
-        <q-item-label header> Menu </q-item-label>
+        <q-item-label header><b>Menu</b></q-item-label>
 
         <EssentialLink
           v-for="link in essentialLinks"
@@ -63,17 +63,17 @@ export default defineComponent({
           this.essentialLinks = [ 
             {
               title: "Administradores",
-              icon: "admin_panel_settings",
+              icon: "account_circle",
               to: "admin.administradores",
             },
             {
               title: "Auxiliares",
-              icon: "person_outline",
+              icon: "group",
               to: "admin.auxiliares",
             },
             {
               title: "Motoristas",
-              icon: "person_outline",
+              icon: "contact_mail",
               to: "admin.motoristas",
             },
             {
@@ -127,3 +127,10 @@ export default defineComponent({
   }
 });
 </script>
+
+<style>
+  .q-list{
+    padding: 10%;
+    padding-top: 5%;
+  }
+</style>
