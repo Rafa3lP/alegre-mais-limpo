@@ -1,11 +1,7 @@
 <template>
-  <q-page class="flex flex-center">
-    <img
-      alt="Quasar logo"
-      src="~assets/logo.svg"
-      style="width: 200px; height: 200px"
-    />
-  </q-page>
+    <div class="q-pa-md">
+        <center><q-img src="~assets/logo.png"></q-img></center>
+    </div> 
 </template>
 
 <script>
@@ -15,3 +11,9 @@ export default defineComponent({
   name: "PageIndex",
 });
 </script>
+
+<style>
+    .q-img{
+        width: 90%; 
+    }
+</style>

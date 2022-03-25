@@ -1,6 +1,13 @@
 <template>
-  <h3>Protected route</h3>
-  <h6>Olá {{ getUser.nome }}</h6>
+    <div class="q-pa-md">
+        <div class="col-6">
+            <q-img src="">
+                <div class="absolute-full text-subtitle2 flex flex-center">
+                    <h6>MOTORISTA {{ getUser.nome }}</h6>
+                </div>
+            </q-img>
+        </div>
+    </div> 
 </template>
 
 <script>
@@ -18,5 +25,20 @@ export default {
 </script>
 
 <style>
-
+    .q-img{
+        position: relative;
+        width: 100%; 
+        height: 0; 
+        padding-top: 56.2500%;
+        padding-bottom: 48px; 
+        box-shadow: 0 2px 8px 0 rgba(63,69,81,0.16); 
+        margin-top: 1.6em; 
+        margin-bottom: 0.9em; 
+        overflow: hidden;
+        border-radius: 8px; 
+        will-change: transform;
+        background: url(~assets/logo.png);
+        background-repeat: no-repeat;
+        background-size: 100%;
+    }
 </style>
